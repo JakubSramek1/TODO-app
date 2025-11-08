@@ -1,8 +1,10 @@
-import {Alert, Box, Button, Heading, Input, Stack, Text} from '@chakra-ui/react';
+import {Box, Button, Heading, Input, Stack, Text} from '@chakra-ui/react';
 import {FormEvent, useCallback, useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {loginUser} from './authSlice';
+import AuthErrorAlert from '../../components/auth/AuthErrorAlert';
+import FormField from '../../components/form/FormField';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -40,29 +42,30 @@ const Login = () => {
           Sign In
         </Heading>
 
-        {hasError ? (
-          <Alert.Root status="error">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>{error}</Alert.Title>
-            </Alert.Content>
-          </Alert.Root>
-        ) : null}
+        {hasError ? <AuthErrorAlert>{error}</AuthErrorAlert> : null}
 
-        <label>Username</label>
-        <Input
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          autoComplete="username"
-        />
+        <FormField label="Username" required>
+          <Input
+            value={username}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUsername(event.target.value)
+            }
+            autoComplete="username"
+            variant="outline"
+          />
+        </FormField>
 
-        <label>Password</label>
-        <Input
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          autoComplete="current-password"
-        />
+        <FormField label="Password" required>
+          <Input
+            type="password"
+            value={password}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(event.target.value)
+            }
+            autoComplete="current-password"
+            variant="outline"
+          />
+        </FormField>
 
         <Button type="submit" colorScheme="blue" loading={isLoading}>
           Login

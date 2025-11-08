@@ -26,6 +26,7 @@ const fontWeights = {
 
 const theme = createSystem(defaultConfig, {
   theme: {
+    ...defaultConfig.theme,
     tokens: {
       colors: {
         'text-primary': {value: '#001141'},
@@ -62,6 +63,22 @@ const theme = createSystem(defaultConfig, {
       },
     },
     recipes: {
+      input: {
+        variants: {
+          outline: {
+            field: {
+              borderWidth: '1px',
+              borderColor: 'border-gray',
+              borderRadius: 'sm',
+              _hover: {borderColor: 'border-brand'},
+              _focusVisible: {
+                borderColor: 'border-brand',
+                boxShadow: '0 0 0 1px var(--colors-border-brand)',
+              },
+            },
+          },
+        },
+      },
       button: {
         base: {
           bg: 'unset',
