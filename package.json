@@ -51,6 +51,8 @@
     "react-dom": "^19.2.0",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^16.2.3",
+    "react-redux": "~9.2.0",
+    "react-router-dom": "^6.28.0",
     "react-scripts": "^5.0.1",
     "styled-components": "^6.1.19",
     "swagger-autogen": "^2.23.7",
