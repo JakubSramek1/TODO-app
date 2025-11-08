@@ -39,36 +39,18 @@ userRoutes.post('/api/register', (req: Request, res: Response) => {
 userRoutes.post('/api/login', (req: Request, res: Response) => {
   const {password, username} = validateCredentialsFromBody(req, res);
 
-  // Correct: query by an object, not by a function
-  userDB.findOne({username}, async (err: Error | null, user: User | null) => {
-    console.log('user', user, 'err', err);
-    if (isNotNil(err)) {
-      return res.status(500).json({error: 'Internal server error'});
-    }
+  userDB.findOne(
+    (user: User) => user.username === username && comparePassword(password, user.password),
+    (err: Error | null, user: User | null) => {
+      if (isNotNil(err)) return res.status(500).json({error: 'Internal server error'});
+      if (isNil(user)) return res.status(401).json({error: 'Invalid credential'});
 
-    // User not found
-    if (isNil(user)) {
-      return res.status(401).json({error: 'Invalid credentials'});
-    }
-
-    try {
-      // Compare the password using bcrypt
-      const isPasswordValid = await comparePassword(password, user.password);
-
-      if (!isPasswordValid) {
-        return res.status(401).json({error: 'Invalid credentials'});
-      }
-
-      // Generate tokens
       const accessToken = signAccessToken(user.id, username);
       const refreshToken = signRefreshToken(user.id, username);
 
-      return res.status(200).json({accessToken, refreshToken});
-    } catch (e) {
-      console.error('Password comparison failed:', e);
-      return res.status(500).json({error: 'Internal server error'});
+      res.status(200).json({accessToken, refreshToken});
     }
-  });
+  );
 });
 
 userRoutes.post('/api/refresh-token', (req: Request, res: Response) => {
