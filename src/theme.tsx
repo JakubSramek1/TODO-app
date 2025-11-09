@@ -26,6 +26,7 @@ const fontWeights = {
 
 const theme = createSystem(defaultConfig, {
   theme: {
+    ...defaultConfig.theme,
     tokens: {
       colors: {
         'text-primary': {value: '#001141'},
@@ -64,10 +65,7 @@ const theme = createSystem(defaultConfig, {
     recipes: {
       button: {
         base: {
-          bg: 'unset',
-          backgroundColor: '#0F62FE',
-          color: '#FFFFFF',
-          borderRadius: '100px',
+          borderRadius: 'sm',
         },
       },
     },
