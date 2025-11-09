@@ -1,7 +1,8 @@
-import {Box, Button, Heading, Icon, Text} from '@chakra-ui/react';
+import {Box, Heading, Icon, Text} from '@chakra-ui/react';
 import {ReactComponent as IconAdd} from '../../assets/icons/icon-add.svg';
 import {useAppSelector} from '../../hooks';
 import {useTodos} from '../../features/todos/TodoContext';
+import AppButton from '../../components/ui/AppButton';
 
 const HomePanelHeader = () => {
   const username = useAppSelector((state) => state.auth.user?.username ?? 'there');
@@ -17,12 +18,7 @@ const HomePanelHeader = () => {
           20. listopadu 2023
         </Text>
       </Box>
-      <Button
-        bg="fill-brand"
-        color="text-white"
-        borderRadius="full"
-        _hover={{bg: 'fill-brand-hover'}}
-        _active={{bg: 'fill-brand-hover'}}
+      <AppButton
         css={{'& svg path': {fill: 'currentColor'}}}
         onClick={openCreateTask}
         display="inline-flex"
@@ -33,7 +29,7 @@ const HomePanelHeader = () => {
         <Icon boxSize={4}>
           <IconAdd />
         </Icon>
-      </Button>
+      </AppButton>
     </Box>
   );
 };

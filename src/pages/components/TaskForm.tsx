@@ -4,6 +4,7 @@ import {useForm} from 'react-hook-form';
 import {ReactComponent as IconBack} from '../../assets/icons/icon-backwards.svg';
 import {ReactComponent as IconCheck} from '../../assets/icons/icon-check.svg';
 import FormField from '../../components/form/FormField';
+import AppButton from '../../components/ui/AppButton';
 
 export interface TaskFormValues {
   title: string;
@@ -79,6 +80,7 @@ const TaskForm = ({
           type="button"
           rounded="full"
           bg="fill-gray"
+          color="fill-darkBlue"
           alignSelf={{base: 'flex-start', md: 'center'}}
         >
           <IconBack />
@@ -125,20 +127,10 @@ const TaskForm = ({
         >
           {cancelLabel}
         </Button>
-        <Button
-          type="submit"
-          bg="fill-brand"
-          color="text-white"
-          borderRadius="full"
-          _hover={{bg: 'fill-brand-hover'}}
-          _active={{bg: 'fill-brand-hover'}}
-          loading={isSubmitting}
-          css={{'& svg path': {fill: 'currentColor'}}}
-          w={{base: 'full', md: 'auto'}}
-        >
+        <AppButton type="submit" loading={isSubmitting} w={{base: 'full', md: 'auto'}}>
           {submitLabel}
           <Icon as={IconCheck} boxSize={4} />
-        </Button>
+        </AppButton>
       </Stack>
     </Box>
   );

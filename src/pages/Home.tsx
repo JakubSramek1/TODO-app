@@ -1,4 +1,4 @@
-import {Box, Button} from '@chakra-ui/react';
+import {Box} from '@chakra-ui/react';
 import AppHeader from '../components/ui/AppHeader';
 import CardWrapper from '../components/ui/CardWrapper';
 import NewTaskForm from './components/NewTaskForm';
@@ -8,6 +8,7 @@ import EditTaskForm from './components/EditTaskForm';
 import {useAppDispatch} from '../hooks';
 import {logout} from '../features/auth/authSlice';
 import {useCallback} from 'react';
+import AppButton from '../components/ui/AppButton';
 
 const HomeContent = () => {
   const {isCreatingTask, editingTodo, closeEditTask} = useTodos();
@@ -38,17 +39,9 @@ const HomeContent = () => {
         </CardWrapper>
         {!editingTodo && !isCreatingTask && (
           <Box mt={4} display="flex" justifyContent="center">
-            <Button
-              onClick={handleLogout}
-              bg="fill-brand"
-              color="text-white"
-              borderRadius="full"
-              _hover={{bg: 'fill-brand-hover'}}
-              _active={{bg: 'fill-brand-hover'}}
-              w={{base: 'full', sm: 'auto'}}
-            >
+            <AppButton onClick={handleLogout} w={{base: 'full', sm: 'auto'}}>
               Logout
-            </Button>
+            </AppButton>
           </Box>
         )}
       </Box>

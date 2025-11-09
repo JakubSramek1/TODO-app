@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
+import {Box, Heading, Icon, IconButton, Input, InputGroup, Stack, Text} from '@chakra-ui/react';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -20,6 +10,7 @@ import {ReactComponent as IconHide} from '../../../assets/icons/icon.hide.svg';
 import {ReactComponent as IconShow} from '../../../assets/icons/icon-show.svg';
 import {ReactComponent as IconForward} from '../../../assets/icons/icon-foward.svg';
 import {loginUser} from '../authSlice';
+import AppButton from '../../../components/ui/AppButton';
 
 const loginSchema = yup.object({
   username: yup.string().trim().required('Username is required'),
@@ -115,20 +106,10 @@ const LoginPanel = () => {
         </Stack>
 
         <Box>
-          <Button
-            type="submit"
-            w="full"
-            loading={isLoading}
-            bg="fill-brand"
-            color="text-white"
-            borderRadius="full"
-            _hover={{bg: 'fill-brand-hover'}}
-            _active={{bg: 'fill-brand-hover'}}
-            css={{'& svg path': {fill: 'currentColor'}}}
-          >
+          <AppButton type="submit" w="full" loading={isLoading}>
             Login
             <Icon as={IconForward} boxSize={4} ml={2} />
-          </Button>
+          </AppButton>
         </Box>
       </Stack>
     </Box>
