@@ -32,9 +32,7 @@ const HomePanelHeader = ({onAddTask}: HomePanelHeaderProps) => {
         gap={2}
       >
         Add Task
-        <Icon boxSize={4}>
-          <IconAdd />
-        </Icon>
+        <Icon as={IconAdd} boxSize={4} />
       </Button>
     </Box>
   );

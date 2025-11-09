@@ -126,9 +126,7 @@ const NewTaskForm = ({onClose}: NewTaskFormProps) => {
           css={{'& svg path': {fill: 'currentColor'}}}
         >
           Create task
-          <Icon boxSize={4}>
-            <IconCheck />
-          </Icon>
+          <Icon as={IconCheck} boxSize={4} />
         </Button>
       </Stack>
     </Box>

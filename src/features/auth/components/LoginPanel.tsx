@@ -128,9 +128,7 @@ const LoginPanel = () => {
             css={{'& svg path': {fill: 'currentColor'}}}
           >
             Login
-            <Icon size="sm">
-              <IconForward />
-            </Icon>
+            <Icon as={IconForward} size="sm" />
           </Button>
         </Box>
       </Stack>
