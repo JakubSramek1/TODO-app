@@ -3,7 +3,7 @@ import PlaceholderImage from '../../assets/Image1.svg';
 import {useTodos} from '../../features/todos/TodoContext';
 
 const HomeEmptyState = () => {
-  const {openCreateTask} = useTodos();
+  const {openCreateTask, todos} = useTodos();
 
   return (
     <Box
@@ -27,9 +27,11 @@ const HomeEmptyState = () => {
       <Text fontSize="text.base" fontWeight="text.base" color="text-tertiary">
         There is no more task to do.
       </Text>
-      <Button onClick={openCreateTask} bg="fill-brand" color="text-white" borderRadius="100px">
-        Create your first task
-      </Button>
+      {!todos.length && (
+        <Button onClick={openCreateTask} bg="fill-brand" color="text-white" borderRadius="100px">
+          Create your first task
+        </Button>
+      )}
     </Box>
   );
 };
