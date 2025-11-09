@@ -15,9 +15,14 @@ interface TodoContextValue {
   todos: TodoSummary[];
   isLoading: boolean;
   isCreatingTask: boolean;
+  editingTodoId: string | null;
+  editingTodo: TodoSummary | null;
   openCreateTask: () => void;
   closeCreateTask: () => void;
+  openEditTask: (todo: TodoSummary) => void;
+  closeEditTask: () => void;
   createTodo: (payload: CreateTodoPayload) => Promise<void>;
+  updateTodo: (id: string, payload: CreateTodoPayload) => Promise<void>;
   toggleTodoStatus: (todo: TodoSummary, completed: boolean) => Promise<void>;
   deleteTodo: (todo: TodoSummary) => Promise<void>;
   refreshTodos: () => Promise<void>;
@@ -30,10 +35,12 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
   const [todos, setTodos] = useState<TodoSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [editingTodo, setEditingTodo] = useState<TodoSummary | null>(null);
 
   const fetchTodos = useCallback(async () => {
     if (!accessToken) {
       setTodos([]);
+      setEditingTodo(null);
       return;
     }
 
@@ -42,10 +49,16 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       const response = await apiClient.get<{todos: TodoSummary[]}>('/todo/list', {
         headers: {Authorization: `Bearer ${accessToken}`},
       });
-      setTodos(response.data.todos ?? []);
+      const nextTodos = response.data.todos ?? [];
+      setTodos(nextTodos);
+      setEditingTodo((current) => {
+        if (!current) return null;
+        return nextTodos.find((todo) => todo.id === current.id) ?? null;
+      });
     } catch (error) {
       console.error('Failed to load todos', error);
       setTodos([]);
+      setEditingTodo(null);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +74,14 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
 
   const closeCreateTask = useCallback(() => {
     setIsCreatingTask(false);
+  }, []);
+
+  const openEditTask = useCallback((todo: TodoSummary) => {
+    setEditingTodo(todo);
+  }, []);
+
+  const closeEditTask = useCallback(() => {
+    setEditingTodo(null);
   }, []);
 
   const createTodo = useCallback(
@@ -85,6 +106,31 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       }
     },
     [accessToken, fetchTodos, closeCreateTask]
+  );
+
+  const updateTodo = useCallback(
+    async (id: string, payload: CreateTodoPayload) => {
+      if (!accessToken) {
+        return;
+      }
+
+      try {
+        await apiClient.put(
+          `/todo/${id}`,
+          {
+            title: payload.title,
+            description: payload.description ?? '',
+          },
+          {headers: {Authorization: `Bearer ${accessToken}`}}
+        );
+        await fetchTodos();
+        closeEditTask();
+      } catch (error) {
+        console.error('Failed to update task', error);
+        await fetchTodos();
+      }
+    },
+    [accessToken, fetchTodos, closeEditTask]
   );
 
   const toggleTodoStatus = useCallback(
@@ -112,6 +158,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       }
 
       setTodos((prev) => prev.filter((item) => item.id !== todo.id));
+      setEditingTodo((current) => (current?.id === todo.id ? null : current));
       try {
         await apiClient.delete(`/todo/${todo.id}`, {
           headers: {Authorization: `Bearer ${accessToken}`},
@@ -129,9 +176,14 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       todos,
       isLoading,
       isCreatingTask,
+      editingTodoId: editingTodo?.id ?? null,
+      editingTodo,
       openCreateTask,
       closeCreateTask,
+      openEditTask,
+      closeEditTask,
       createTodo,
+      updateTodo,
       toggleTodoStatus,
       deleteTodo,
       refreshTodos: fetchTodos,
@@ -140,9 +192,13 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       todos,
       isLoading,
       isCreatingTask,
+      editingTodo,
       openCreateTask,
       closeCreateTask,
+      openEditTask,
+      closeEditTask,
       createTodo,
+      updateTodo,
       toggleTodoStatus,
       deleteTodo,
       fetchTodos,

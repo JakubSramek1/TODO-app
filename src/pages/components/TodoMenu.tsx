@@ -6,10 +6,14 @@ import {TodoSummary} from '../../features/todos/types';
 import {useTodos} from '../../features/todos/TodoContext';
 
 const TodoMenu = ({todo}: {todo: TodoSummary}) => {
-  const {deleteTodo} = useTodos();
+  const {deleteTodo, openEditTask} = useTodos();
 
   const handleDelete = async () => {
     await deleteTodo(todo);
+  };
+
+  const handleEdit = () => {
+    openEditTask(todo);
   };
 
   return (
@@ -26,7 +30,7 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
           {/* @ts-ignore - Menu.Trigger is not typed properly */}
           <Menu.Content rounded="2xl" minW="216px" py={2}>
             {/* @ts-ignore - Menu.Trigger is not typed properly */}
-            <Menu.Item value="edit" gap={3} py={2}>
+            <Menu.Item value="edit" gap={3} py={2} onClick={handleEdit}>
               <IconEdit />
               <Text fontSize="text.base" fontWeight="text.base" color="text-primary">
                 Edit
