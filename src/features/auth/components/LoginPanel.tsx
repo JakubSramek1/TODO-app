@@ -28,9 +28,16 @@ const loginSchema = yup.object({
 
 type LoginFormValues = yup.InferType<typeof loginSchema>;
 
+const defaultValues: LoginFormValues = {
+  username: '',
+  password: '',
+};
+
 const LoginPanel = () => {
   const dispatch = useAppDispatch();
   const {status, error} = useAppSelector(({auth}) => auth);
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const {
     register,
@@ -38,20 +45,13 @@ const LoginPanel = () => {
     formState: {errors, isSubmitting},
   } = useForm<LoginFormValues>({
     resolver: yupResolver(loginSchema),
-    defaultValues: {
-      username: '',
-      password: '',
-    },
+    defaultValues,
     mode: 'onChange',
   });
 
   const isLoading = status === 'loading' || isSubmitting;
   const hasError = !!error;
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const passwordAriaLabel = useMemo(
-    () => (isPasswordVisible ? 'Hide password' : 'Show password'),
-    [isPasswordVisible]
-  );
+  const passwordAriaLabel = isPasswordVisible ? 'Hide password' : 'Show password';
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((previous) => !previous);

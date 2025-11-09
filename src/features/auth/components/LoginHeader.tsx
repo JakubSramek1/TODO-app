@@ -1,14 +1,10 @@
 import {Box, Image, Text} from '@chakra-ui/react';
 import logo from '../../../assets/logo.svg';
 
-interface LoginHeaderProps {
-  height?: string;
-}
-
-const LoginHeader = ({height = '112px'}: LoginHeaderProps) => (
+const LoginHeader = () => (
   <Box
     bg="fill-gray-lightest"
-    h={height}
+    h="112px"
     w="full"
     display="flex"
     justifyContent="center"
