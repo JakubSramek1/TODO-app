@@ -35,7 +35,7 @@ const Register = () => {
   );
 
   return (
-    <Box maxW="sm" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg" bg="fill-white">
+    <Box maxW="sm" mx="auto" p={8} borderWidth="1px" borderRadius="lg" bg="fill-white">
       <Stack as="form" onSubmit={handleSubmit}>
         <Heading fontSize="heading.1" fontWeight="heading.1" textAlign="center">
           Register

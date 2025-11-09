@@ -11,7 +11,7 @@ const Home = () => {
   };
 
   return (
-    <Box maxW="xl" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg">
+    <Box maxW="xl" mx="auto" p={8} borderWidth="1px" borderRadius="lg">
       <Stack align="center">
         <Heading size="lg">Welcome, {username}!</Heading>
         <Text>You are viewing a protected page. Only authenticated users can see this.</Text>
