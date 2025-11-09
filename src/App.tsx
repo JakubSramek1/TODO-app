@@ -10,7 +10,7 @@ function App() {
   const {i18n, t} = useTranslation();
 
   return (
-    <Box bg="fill-gray-lightest" h="100vh" w="100vw">
+    <Box bg="fill-gray-lightest" minH="100vh" minW="100vw">
       <Helmet
         titleTemplate={`%s - ${t('app.title')}`}
         defaultTitle={t('app.title')}

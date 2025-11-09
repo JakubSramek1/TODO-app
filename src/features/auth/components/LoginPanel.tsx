@@ -63,28 +63,27 @@ const LoginPanel = () => {
 
   return (
     <Box
-      maxW="sm"
-      mx="auto"
-      p={8}
+      maxW="28rem"
+      mx={{base: 2, md: 'auto'}}
+      p={{base: 6, md: 8}}
       borderWidth="1px"
-      borderRadius="24px"
+      borderRadius="3xl"
       bg="fill-white"
-      minW="560px"
     >
-      <Stack as="form" onSubmit={handleSubmit(onSubmit)} gap={10}>
-        <Box spaceY={6}>
-          <Heading fontSize="heading.1" fontWeight="heading.1" textAlign="center">
+      <Stack as="form" onSubmit={handleSubmit(onSubmit)} gap={{base: 6, md: 10}}>
+        <Stack gap={{base: 4, md: 6}} textAlign="center">
+          <Heading fontSize={{base: 'heading.2', md: 'heading.1'}} fontWeight="heading.1">
             It’s good to have you back!
           </Heading>
           <Text fontSize="text.base" fontWeight="text.base" color="text-secondary">
             Welcome to our secure portal! To access the full functionality of our app, kindly
             provide your credentials below. Your privacy is our priority.
           </Text>
-        </Box>
+        </Stack>
 
         {hasError ? <AuthErrorAlert>{error}</AuthErrorAlert> : null}
 
-        <Box spaceY={6}>
+        <Stack gap={{base: 4, md: 6}}>
           <FormField label="Username" required error={errors.username?.message}>
             <Input {...register('username')} autoComplete="username" variant="outline" />
           </FormField>
@@ -113,7 +112,7 @@ const LoginPanel = () => {
               />
             </InputGroup>
           </FormField>
-        </Box>
+        </Stack>
 
         <Box>
           <Button
@@ -122,13 +121,13 @@ const LoginPanel = () => {
             loading={isLoading}
             bg="fill-brand"
             color="text-white"
-            borderRadius="100px"
+            borderRadius="full"
             _hover={{bg: 'fill-brand-hover'}}
             _active={{bg: 'fill-brand-hover'}}
             css={{'& svg path': {fill: 'currentColor'}}}
           >
             Login
-            <Icon as={IconForward} size="sm" />
+            <Icon as={IconForward} boxSize={4} ml={2} />
           </Button>
         </Box>
       </Stack>
