@@ -132,13 +132,6 @@ const LoginPanel = () => {
               <IconForward />
             </Icon>
           </Button>
-
-          {/* <Text textAlign="center">
-            Need an account?{' '}
-            <Link to="/register" color="blue.500">
-              Register
-            </Link>
-          </Text> */}
         </Box>
       </Stack>
     </Box>
