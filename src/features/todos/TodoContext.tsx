@@ -19,6 +19,7 @@ interface TodoContextValue {
   closeCreateTask: () => void;
   createTodo: (payload: CreateTodoPayload) => Promise<void>;
   toggleTodoStatus: (todo: TodoSummary, completed: boolean) => Promise<void>;
+  deleteTodo: (todo: TodoSummary) => Promise<void>;
   refreshTodos: () => Promise<void>;
 }
 
@@ -104,6 +105,25 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
     [accessToken, fetchTodos]
   );
 
+  const deleteTodo = useCallback(
+    async (todo: TodoSummary) => {
+      if (!accessToken) {
+        return;
+      }
+
+      setTodos((prev) => prev.filter((item) => item.id !== todo.id));
+      try {
+        await apiClient.delete(`/todo/${todo.id}`, {
+          headers: {Authorization: `Bearer ${accessToken}`},
+        });
+      } catch (error) {
+        console.error('Failed to delete task', error);
+        await fetchTodos();
+      }
+    },
+    [accessToken, fetchTodos]
+  );
+
   const value = useMemo<TodoContextValue>(
     () => ({
       todos,
@@ -113,6 +133,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       closeCreateTask,
       createTodo,
       toggleTodoStatus,
+      deleteTodo,
       refreshTodos: fetchTodos,
     }),
     [
@@ -123,6 +144,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       closeCreateTask,
       createTodo,
       toggleTodoStatus,
+      deleteTodo,
       fetchTodos,
     ]
   );

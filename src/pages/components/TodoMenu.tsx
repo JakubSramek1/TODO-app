@@ -3,9 +3,15 @@ import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
 import {TodoSummary} from '../../features/todos/types';
+import {useTodos} from '../../features/todos/TodoContext';
 
 const TodoMenu = ({todo}: {todo: TodoSummary}) => {
-  console.log(todo);
+  const {deleteTodo} = useTodos();
+
+  const handleDelete = async () => {
+    await deleteTodo(todo);
+  };
+
   return (
     <Menu.Root>
       {/* @ts-ignore - Menu.Trigger is not typed properly */}
@@ -20,16 +26,21 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
           {/* @ts-ignore - Menu.Trigger is not typed properly */}
           <Menu.Content rounded="2xl" minW="216px" py={2}>
             {/* @ts-ignore - Menu.Trigger is not typed properly */}
-            <Menu.Item value="cut" gap={3} py={2}>
+            <Menu.Item value="edit" gap={3} py={2}>
               <IconEdit />
               <Text fontSize="text.base" fontWeight="text.base" color="text-primary">
                 Edit
               </Text>
             </Menu.Item>
             {/* @ts-ignore - Menu.Trigger is not typed properly */}
-            <Menu.Item value="copy" gap={3} css={{'& svg path': {fill: 'text-danger'}}} py={2}>
-              <Icon as={IconDelete} size="sm" />
-
+            <Menu.Item
+              value="delete"
+              gap={3}
+              css={{'& svg path': {fill: 'text-danger'}}}
+              py={2}
+              onClick={handleDelete}
+            >
+              <Icon as={IconDelete} boxSize={4} />
               <Text color="text-danger">Delete</Text>
             </Menu.Item>
           </Menu.Content>

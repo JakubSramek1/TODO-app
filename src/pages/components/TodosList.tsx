@@ -1,9 +1,9 @@
-import {Box, IconButton, Stack, Text} from '@chakra-ui/react';
+import {Box, Stack, Text} from '@chakra-ui/react';
 import HomePanelHeader from './HomePanelHeader';
-import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
 import TodoStatusCheckbox from './TodoStatusCheckbox';
 import {useTodos} from '../../features/todos/TodoContext';
 import type {TodoSummary} from '../../features/todos/types';
+import TodoMenu from './TodoMenu';
 
 const TodosList = () => {
   const {todos} = useTodos();
@@ -74,9 +74,7 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
         ) : null}
       </Box>
     </Stack>
-    <IconButton aria-label="Task actions" variant="ghost" rounded="full" minW="32px" h="32px">
-      <Box as={IconMore} />
-    </IconButton>
+    <TodoMenu todo={todo} />
   </Box>
 );
 
