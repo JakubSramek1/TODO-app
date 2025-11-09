@@ -1,3 +1,4 @@
+import {Box} from '@chakra-ui/react';
 import AppHeader from '../components/ui/AppHeader';
 import CardWrapper from '../components/ui/CardWrapper';
 import NewTaskForm from './components/NewTaskForm';
@@ -21,12 +22,14 @@ const HomeContent = () => {
   };
 
   return (
-    <>
+    <Box minH="100vh" display="flex" flexDirection="column">
       <AppHeader />
-      <CardWrapper mx={10} spaceY={10} as="section">
-        {renderContent()}
-      </CardWrapper>
-    </>
+      <Box flex="1" px={{base: 4, md: 10}} py={{base: 6, md: 10}}>
+        <CardWrapper w="full" maxW="720px" mx="auto" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
+          {renderContent()}
+        </CardWrapper>
+      </Box>
+    </Box>
   );
 };
 

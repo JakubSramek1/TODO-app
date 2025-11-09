@@ -64,9 +64,14 @@ const TaskForm = ({
       onSubmit={handleSubmit(handleFormSubmit)}
       display="flex"
       flexDirection="column"
-      gap={10}
+      gap={{base: 6, md: 10}}
     >
-      <Stack direction="row" alignItems="center" gap={6}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent={{base: 'justify-between', md: 'flex-start'}}
+        gap={{base: 4, md: 6}}
+      >
         <IconButton
           aria-label="Back to home"
           onClick={handleCancel}
@@ -74,6 +79,7 @@ const TaskForm = ({
           type="button"
           rounded="full"
           bg="fill-gray"
+          alignSelf={{base: 'flex-start', md: 'center'}}
         >
           <IconBack />
         </IconButton>
@@ -82,7 +88,7 @@ const TaskForm = ({
         </Heading>
       </Stack>
 
-      <Stack gap={6}>
+      <Stack gap={{base: 4, md: 6}}>
         <FormField label="Task name" required error={errors.title?.message}>
           <Input
             {...register('title', {required: 'Task name is required'})}
@@ -103,13 +109,19 @@ const TaskForm = ({
         </FormField>
       </Stack>
 
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack
+        direction={{base: 'column-reverse', md: 'row'}}
+        justifyContent={{base: 'flex-start', md: 'space-between'}}
+        alignItems={{base: 'stretch', md: 'center'}}
+        gap={{base: 4, md: 6}}
+      >
         <Button
           bg="fill-gray"
           color="text-secondary"
           borderRadius="full"
           onClick={handleCancel}
           type="button"
+          w={{base: 'full', md: 'auto'}}
         >
           {cancelLabel}
         </Button>
@@ -122,6 +134,7 @@ const TaskForm = ({
           _active={{bg: 'fill-brand-hover'}}
           loading={isSubmitting}
           css={{'& svg path': {fill: 'currentColor'}}}
+          w={{base: 'full', md: 'auto'}}
         >
           {submitLabel}
           <Icon as={IconCheck} boxSize={4} />
