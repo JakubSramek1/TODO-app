@@ -2,7 +2,7 @@ import {Icon, IconButton, Menu, Portal, Text} from '@chakra-ui/react';
 import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
-import {TodoSummary} from './TodoOverview';
+import {TodoSummary} from '../../features/todos/types';
 
 const TodoMenu = ({todo}: {todo: TodoSummary}) => {
   console.log(todo);

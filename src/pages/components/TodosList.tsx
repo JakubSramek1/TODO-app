@@ -1,24 +1,20 @@
-import {Box, Stack, Text} from '@chakra-ui/react';
+import {Box, IconButton, Stack, Text} from '@chakra-ui/react';
 import HomePanelHeader from './HomePanelHeader';
-import type {TodoSummary} from './TodoOverview';
+import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
 import TodoStatusCheckbox from './TodoStatusCheckbox';
-import TodoMenu from './TodoMenu';
+import {useTodos} from '../../features/todos/TodoContext';
+import type {TodoSummary} from '../../features/todos/types';
 
-interface TodosListProps {
-  todos: TodoSummary[];
-  onAddTask: () => void;
-  onToggleStatus: (todo: TodoSummary, completed: boolean) => void;
-}
-
-const TodosList = ({todos, onAddTask, onToggleStatus}: TodosListProps) => {
+const TodosList = () => {
+  const {todos} = useTodos();
   const pending = todos.filter((todo) => !todo.completed);
   const completed = todos.filter((todo) => todo.completed);
 
   return (
     <Box display="flex" flexDirection="column" gap={10}>
-      <HomePanelHeader onAddTask={onAddTask} />
-      <TaskSection title="To-do" items={pending} onToggleStatus={onToggleStatus} />
-      <TaskSection title="Completed" items={completed} completed onToggleStatus={onToggleStatus} />
+      <HomePanelHeader />
+      <TaskSection title="To-do" items={pending} />
+      <TaskSection title="Completed" items={completed} completed />
     </Box>
   );
 };
@@ -27,29 +23,31 @@ interface TaskSectionProps {
   title: string;
   items: TodoSummary[];
   completed?: boolean;
-  onToggleStatus: (todo: TodoSummary, completed: boolean) => void;
 }
 
-const TaskSection = ({title, items, completed = false, onToggleStatus}: TaskSectionProps) => (
-  <Box display="flex" flexDirection="column" gap={4}>
-    <Text fontSize="heading.3" fontWeight="heading.2">
-      {title}
-    </Text>
-    <Stack gap={0}>
-      {items.length === 0 ? (
-        <Box py={6} px={4} textAlign="center" color="text-tertiary">
-          No tasks here yet.
-        </Box>
-      ) : (
-        items.map((item) => (
-          <Box key={item.id}>
-            <TaskRow todo={item} completed={completed} onToggleStatus={onToggleStatus} />
+const TaskSection = ({title, items, completed = false}: TaskSectionProps) => {
+  const {toggleTodoStatus} = useTodos();
+  return (
+    <Box display="flex" flexDirection="column" gap={4}>
+      <Text fontSize="heading.3" fontWeight="heading.2">
+        {title}
+      </Text>
+      <Stack gap={0}>
+        {items.length === 0 ? (
+          <Box py={6} px={4} textAlign="center" color="text-tertiary">
+            No tasks here yet.
           </Box>
-        ))
-      )}
-    </Stack>
-  </Box>
-);
+        ) : (
+          items.map((item) => (
+            <Box key={item.id}>
+              <TaskRow todo={item} completed={completed} onToggleStatus={toggleTodoStatus} />
+            </Box>
+          ))
+        )}
+      </Stack>
+    </Box>
+  );
+};
 
 interface TaskRowProps {
   todo: TodoSummary;
@@ -76,7 +74,9 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
         ) : null}
       </Box>
     </Stack>
-    <TodoMenu todo={todo} />
+    <IconButton aria-label="Task actions" variant="ghost" rounded="full" minW="32px" h="32px">
+      <Box as={IconMore} />
+    </IconButton>
   </Box>
 );
 

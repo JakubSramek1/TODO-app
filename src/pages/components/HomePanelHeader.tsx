@@ -1,13 +1,11 @@
 import {Box, Button, Heading, Icon, Text} from '@chakra-ui/react';
 import {ReactComponent as IconAdd} from '../../assets/icons/icon-add.svg';
 import {useAppSelector} from '../../hooks';
+import {useTodos} from '../../features/todos/TodoContext';
 
-interface HomePanelHeaderProps {
-  onAddTask: () => void;
-}
-
-const HomePanelHeader = ({onAddTask}: HomePanelHeaderProps) => {
+const HomePanelHeader = () => {
   const username = useAppSelector((state) => state.auth.user?.username ?? 'there');
+  const {openCreateTask} = useTodos();
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="start">
@@ -26,13 +24,15 @@ const HomePanelHeader = ({onAddTask}: HomePanelHeaderProps) => {
         _hover={{bg: 'fill-brand-hover'}}
         _active={{bg: 'fill-brand-hover'}}
         css={{'& svg path': {fill: 'currentColor'}}}
-        onClick={onAddTask}
+        onClick={openCreateTask}
         display="inline-flex"
         alignItems="center"
         gap={2}
       >
         Add Task
-        <Icon as={IconAdd} boxSize={4} />
+        <Icon boxSize={4}>
+          <IconAdd />
+        </Icon>
       </Button>
     </Box>
   );

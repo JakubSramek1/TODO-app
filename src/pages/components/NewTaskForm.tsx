@@ -3,26 +3,21 @@ import {ReactComponent as IconBack} from '../../assets/icons/icon-backwards.svg'
 import {useForm} from 'react-hook-form';
 import FormField from '../../components/form/FormField';
 import {ReactComponent as IconCheck} from '../../assets/icons/icon-check.svg';
-import apiClient from '../../api/apiClient';
-import {useAppSelector} from '../../hooks';
+import {useTodos} from '../../features/todos/TodoContext';
 import {useState} from 'react';
 
-interface NewTaskFormProps {
-  onClose: () => void;
-}
-
-type NewTaskFormValues = {
+interface NewTaskFormValues {
   title: string;
   description?: string;
-};
+}
 
 const defaultValues: NewTaskFormValues = {
   title: '',
   description: '',
 };
 
-const NewTaskForm = ({onClose}: NewTaskFormProps) => {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
+const NewTaskForm = () => {
+  const {createTodo, closeCreateTask} = useTodos();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -37,24 +32,14 @@ const NewTaskForm = ({onClose}: NewTaskFormProps) => {
 
   const handleDiscard = () => {
     reset();
-    onClose();
+    closeCreateTask();
   };
 
   const handleSubmitTask = async (values: NewTaskFormValues) => {
     setIsLoading(true);
     try {
-      await apiClient.post(
-        '/todo',
-        {
-          title: values.title,
-          description: values.description ?? '',
-        },
-        accessToken ? {headers: {Authorization: `Bearer ${accessToken}`}} : undefined
-      );
-      onClose();
+      await createTodo(values);
       reset(defaultValues);
-    } catch (error) {
-      console.error('Failed to create task', error);
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +111,9 @@ const NewTaskForm = ({onClose}: NewTaskFormProps) => {
           css={{'& svg path': {fill: 'currentColor'}}}
         >
           Create task
-          <Icon as={IconCheck} boxSize={4} />
+          <Icon boxSize={4}>
+            <IconCheck />
+          </Icon>
         </Button>
       </Stack>
     </Box>
