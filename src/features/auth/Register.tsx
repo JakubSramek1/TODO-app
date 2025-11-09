@@ -35,9 +35,9 @@ const Register = () => {
   );
 
   return (
-    <Box maxW="sm" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg">
+    <Box maxW="sm" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg" bg="fill-white">
       <Stack as="form" onSubmit={handleSubmit}>
-        <Heading size="lg" textAlign="center">
+        <Heading fontSize="heading.1" fontWeight="heading.1" textAlign="center">
           Register
         </Heading>
 
@@ -61,7 +61,15 @@ const Register = () => {
             variant="outline"
           />
         </FormField>
-        <Button type="submit" colorScheme="blue" loading={isLoading}>
+        <Button
+          type="submit"
+          loading={isLoading}
+          bg="fill-brand"
+          color="text-white"
+          borderRadius="100px"
+          _hover={{bg: 'fill-brand-hover'}}
+          _active={{bg: 'fill-brand-hover'}}
+        >
           Create Account
         </Button>
 

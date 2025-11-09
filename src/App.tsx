@@ -1,3 +1,4 @@
+import {Box} from '@chakra-ui/react';
 import {Helmet} from 'react-helmet-async';
 import {useTranslation} from 'react-i18next';
 import {Navigate, Route, Routes} from 'react-router-dom';
@@ -10,7 +11,7 @@ function App() {
   const {i18n, t} = useTranslation();
 
   return (
-    <>
+    <Box bg="fill-gray-lightest" h="100vh" w="100vw">
       <Helmet
         titleTemplate={`%s - ${t('app.title')}`}
         defaultTitle={t('app.title')}
@@ -31,7 +32,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </Box>
   );
 }
 

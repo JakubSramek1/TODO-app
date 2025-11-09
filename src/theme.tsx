@@ -63,28 +63,9 @@ const theme = createSystem(defaultConfig, {
       },
     },
     recipes: {
-      input: {
-        variants: {
-          outline: {
-            field: {
-              borderWidth: '1px',
-              borderColor: 'border-gray',
-              borderRadius: 'sm',
-              _hover: {borderColor: 'border-brand'},
-              _focusVisible: {
-                borderColor: 'border-brand',
-                boxShadow: '0 0 0 1px var(--colors-border-brand)',
-              },
-            },
-          },
-        },
-      },
       button: {
         base: {
-          bg: 'unset',
-          backgroundColor: '#0F62FE',
-          color: '#FFFFFF',
-          borderRadius: '100px',
+          borderRadius: 'sm',
         },
       },
     },
