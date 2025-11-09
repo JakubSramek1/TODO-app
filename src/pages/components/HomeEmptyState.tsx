@@ -28,7 +28,7 @@ const HomeEmptyState = () => {
         There is no more task to do.
       </Text>
       {!todos.length && (
-        <Button onClick={openCreateTask} bg="fill-brand" color="text-white" borderRadius="100px">
+        <Button onClick={openCreateTask} bg="fill-brand" color="text-white" borderRadius="full">
           Create your first task
         </Button>
       )}

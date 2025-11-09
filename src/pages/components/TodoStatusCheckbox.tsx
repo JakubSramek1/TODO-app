@@ -11,8 +11,8 @@ const TodoStatusCheckbox = ({checked, label, onChange}: TodoStatusCheckboxProps)
   <IconButton
     aria-label={checked ? `Mark "${label}" as incomplete` : `Mark "${label}" as complete`}
     rounded="full"
-    minW="32px"
-    h="32px"
+    minW="8"
+    h="8"
     bg={checked ? 'fill-brand' : 'fill-white'}
     borderWidth="2px"
     borderColor={checked ? 'fill-brand' : 'border-gray'}

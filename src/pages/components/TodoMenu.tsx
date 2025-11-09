@@ -20,7 +20,7 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
     <Menu.Root>
       {/* @ts-ignore - Menu.Trigger is not typed properly */}
       <Menu.Trigger asChild>
-        <IconButton aria-label="Task actions" variant="ghost" rounded="full" minW="32px" h="32px">
+        <IconButton aria-label="Task actions" variant="ghost" rounded="full" minW="8" h="8">
           <Icon as={IconMore} boxSize={4} />
         </IconButton>
       </Menu.Trigger>
@@ -28,7 +28,7 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
         {/* @ts-ignore - Menu.Trigger is not typed properly */}
         <Menu.Positioner>
           {/* @ts-ignore - Menu.Trigger is not typed properly */}
-          <Menu.Content rounded="2xl" minW="216px" py={2}>
+          <Menu.Content rounded="2xl" minW="13.5rem" py={2}>
             {/* @ts-ignore - Menu.Trigger is not typed properly */}
             <Menu.Item value="edit" gap={3} py={2} onClick={handleEdit}>
               <IconEdit />

@@ -20,7 +20,7 @@ const HomePanelHeader = () => {
       <Button
         bg="fill-brand"
         color="text-white"
-        borderRadius="100px"
+        borderRadius="full"
         _hover={{bg: 'fill-brand-hover'}}
         _active={{bg: 'fill-brand-hover'}}
         css={{'& svg path': {fill: 'currentColor'}}}

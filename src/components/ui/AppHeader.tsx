@@ -10,9 +10,9 @@ const AppHeader = () => {
   return (
     <Box
       bg="fill-gray-lightest"
-      h="112px"
+      h="28"
       w="full"
-      px={12}
+      px={{base: 6, md: 12}}
       display="flex"
       alignItems="center"
       justifyContent={showAvatar ? 'space-between' : 'center'}
@@ -22,9 +22,9 @@ const AppHeader = () => {
         <Image
           src={logo}
           alt="Zentask logo"
-          boxSize="32px"
-          maxW="32px"
-          maxH="32px"
+          boxSize="8"
+          maxW="8"
+          maxH="8"
           loading="lazy"
           decoding="async"
           style={{objectFit: 'contain'}}

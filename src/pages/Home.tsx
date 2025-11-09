@@ -25,7 +25,7 @@ const HomeContent = () => {
     <Box minH="100vh" display="flex" flexDirection="column">
       <AppHeader />
       <Box flex="1" px={{base: 4, md: 10}} py={{base: 6, md: 10}}>
-        <CardWrapper w="full" maxW="720px" mx="auto" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
+        <CardWrapper w="full" maxW="45rem" mx="auto" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
           {renderContent()}
         </CardWrapper>
       </Box>

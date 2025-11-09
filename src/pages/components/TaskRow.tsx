@@ -32,7 +32,7 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
               WebkitBoxOrient: 'vertical',
               textOverflow: 'ellipsis',
             }}
-            maxW={{base: '220px', md: '360px'}}
+            maxW={{base: '14rem', md: '22.5rem'}}
           >
             {todo.description}
           </Text>
