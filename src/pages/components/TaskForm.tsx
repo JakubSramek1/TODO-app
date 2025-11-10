@@ -1,5 +1,5 @@
 import {Box, Button, Heading, Icon, IconButton, Input, Stack, Textarea} from '@chakra-ui/react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconBack} from '../../assets/icons/icon-backwards.svg';
@@ -14,8 +14,7 @@ export interface TaskFormValues {
 
 export interface TaskFormProps {
   heading: string;
-  submitLabel: string;
-  cancelLabel: string;
+  isEdited?: boolean;
   initialValues: TaskFormValues;
   onSubmit: (values: TaskFormValues) => Promise<void>;
   onCancel: () => void;
@@ -23,8 +22,7 @@ export interface TaskFormProps {
 
 const TaskForm = ({
   heading,
-  submitLabel,
-  cancelLabel,
+  isEdited = false,
   initialValues,
   onSubmit,
   onCancel,
@@ -35,27 +33,23 @@ const TaskForm = ({
   const {
     register,
     handleSubmit,
-    reset,
     formState: {errors},
   } = useForm<TaskFormValues>({
     defaultValues: initialValues,
     mode: 'onBlur',
   });
 
-  useEffect(() => {
-    reset(initialValues);
-  }, [initialValues, reset]);
-
   const handleCancel = () => {
-    reset(initialValues);
     onCancel();
   };
 
   const handleFormSubmit = async (values: TaskFormValues) => {
     setIsSubmitting(true);
+
     try {
       await onSubmit(values);
-      reset(initialValues);
+    } catch (error) {
+      console.error('Task form submission failed', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -127,10 +121,10 @@ const TaskForm = ({
           type="button"
           w={{base: 'full', md: 'auto'}}
         >
-          {cancelLabel}
+          {isEdited ? t('common.buttons.discardChanges') : t('common.buttons.discard')}
         </Button>
         <AppButton type="submit" loading={isSubmitting} w={{base: 'full', md: 'auto'}}>
-          {submitLabel}
+          {isEdited ? t('common.buttons.saveChanges') : t('common.buttons.createTask')}
           <Icon as={IconCheck} boxSize={4} />
         </AppButton>
       </Stack>

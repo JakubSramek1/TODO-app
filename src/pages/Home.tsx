@@ -10,9 +10,10 @@ import {useAppDispatch} from '../hooks';
 import {logout} from '../features/auth/authSlice';
 import {useCallback} from 'react';
 import AppButton from '../components/ui/AppButton';
+import TodoErrorAlert from './components/TodoErrorAlert';
 
 const HomeContent = () => {
-  const {isCreatingTask, editingTodo, closeEditTask} = useTodos();
+  const {isCreatingTask, editingTodo, closeEditTask, error, clearError} = useTodos();
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
 
@@ -36,9 +37,12 @@ const HomeContent = () => {
     <Box minH="100vh" display="flex" flexDirection="column">
       <AppHeader />
       <Box flex="1" px={{base: 4, md: 10}} py={{base: 6, md: 10}}>
-        <CardWrapper w="full" maxW="45rem" mx="auto" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
-          {renderContent()}
-        </CardWrapper>
+        <Box maxW="45rem" mx="auto" display="flex" flexDirection="column" gap={4}>
+          {error ? <TodoErrorAlert message={error} onDismiss={clearError} /> : null}
+          <CardWrapper w="full" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
+            {renderContent()}
+          </CardWrapper>
+        </Box>
         {!editingTodo && !isCreatingTask && (
           <Box mt={4} display="flex" justifyContent="center">
             <AppButton onClick={handleLogout} w={{base: 'full', sm: 'auto'}}>

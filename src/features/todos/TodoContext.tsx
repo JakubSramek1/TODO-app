@@ -10,6 +10,7 @@ import {
 import apiClient from '../../api/apiClient';
 import {useAppSelector} from '../../hooks';
 import type {CreateTodoPayload, TodoSummary} from './types';
+import i18n from '../../i18n/i18n';
 
 interface TodoContextValue {
   todos: TodoSummary[];
@@ -26,6 +27,8 @@ interface TodoContextValue {
   toggleTodoStatus: (todo: TodoSummary, completed: boolean) => Promise<void>;
   deleteTodo: (todo: TodoSummary) => Promise<void>;
   refreshTodos: () => Promise<void>;
+  error: string | null;
+  clearError: () => void;
 }
 
 const TodoContext = createContext<TodoContextValue | undefined>(undefined);
@@ -36,6 +39,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [editingTodo, setEditingTodo] = useState<TodoSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTodos = useCallback(async () => {
     if (!accessToken) {
@@ -52,6 +56,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       const nextTodos = response.data.todos ?? [];
       setTodos(nextTodos);
       setEditingTodo((current) => {
+        setError(null);
         if (!current) return null;
         return nextTodos.find((todo) => todo.id === current.id) ?? null;
       });
@@ -59,6 +64,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       console.error('Failed to load todos', error);
       setTodos([]);
       setEditingTodo(null);
+      setError(i18n.t('todos.errors.fetchFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -90,6 +96,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         return;
       }
 
+      setError(null);
       try {
         await apiClient.post(
           '/todo',
@@ -101,8 +108,11 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         );
         closeCreateTask();
         await fetchTodos();
+        setError(null);
       } catch (error) {
         console.error('Failed to create task', error);
+        setError(i18n.t('todos.errors.createFailed'));
+        throw error;
       }
     },
     [accessToken, fetchTodos, closeCreateTask]
@@ -114,6 +124,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         return;
       }
 
+      setError(null);
       try {
         await apiClient.put(
           `/todo/${id}`,
@@ -125,9 +136,12 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         );
         await fetchTodos();
         closeEditTask();
+        setError(null);
       } catch (error) {
         console.error('Failed to update task', error);
         await fetchTodos();
+        setError(i18n.t('todos.errors.updateFailed'));
+        throw error;
       }
     },
     [accessToken, fetchTodos, closeEditTask]
@@ -139,13 +153,16 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         return;
       }
 
+      setError(null);
       setTodos((prev) => prev.map((item) => (item.id === todo.id ? {...item, completed} : item)));
       try {
         const endpoint = `/todo/${todo.id}/${completed ? 'complete' : 'incomplete'}`;
         await apiClient.post(endpoint, {}, {headers: {Authorization: `Bearer ${accessToken}`}});
+        setError(null);
       } catch (error) {
         console.error('Failed to update task status', error);
         await fetchTodos();
+        setError(i18n.t('todos.errors.toggleFailed'));
       }
     },
     [accessToken, fetchTodos]
@@ -157,19 +174,24 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
         return;
       }
 
+      setError(null);
       setTodos((prev) => prev.filter((item) => item.id !== todo.id));
       setEditingTodo((current) => (current?.id === todo.id ? null : current));
       try {
         await apiClient.delete(`/todo/${todo.id}`, {
           headers: {Authorization: `Bearer ${accessToken}`},
         });
+        setError(null);
       } catch (error) {
         console.error('Failed to delete task', error);
         await fetchTodos();
+        setError(i18n.t('todos.errors.deleteFailed'));
       }
     },
     [accessToken, fetchTodos]
   );
+
+  const clearError = useCallback(() => setError(null), []);
 
   const value = useMemo<TodoContextValue>(
     () => ({
@@ -187,6 +209,8 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       toggleTodoStatus,
       deleteTodo,
       refreshTodos: fetchTodos,
+      error,
+      clearError,
     }),
     [
       todos,
@@ -202,6 +226,8 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       toggleTodoStatus,
       deleteTodo,
       fetchTodos,
+      error,
+      clearError,
     ]
   );
 

@@ -28,8 +28,7 @@ const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
   return (
     <TaskForm
       heading={t('editTask.heading')}
-      submitLabel={t('common.buttons.saveChanges')}
-      cancelLabel={t('common.buttons.discardChanges')}
+      isEdited
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onCancel={onClose}

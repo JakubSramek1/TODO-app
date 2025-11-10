@@ -22,8 +22,6 @@ const NewTaskForm = () => {
   return (
     <TaskForm
       heading={t('newTask.heading')}
-      submitLabel={t('common.buttons.createTask')}
-      cancelLabel={t('common.buttons.discard')}
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onCancel={closeCreateTask}
