@@ -11,7 +11,7 @@
   "auth.login.fields.password": "Password",
   "auth.login.password.show": "Show password",
   "auth.login.password.hide": "Hide password",
-  "auth.login.submit": "Login",
+  "auth.login.submit": "Log in",
   "auth.login.validation.usernameRequired": "This field is mandatory.",
   "auth.login.validation.passwordRequired": "This field is mandatory.d",
   "common.buttons.logout": "Logout",

@@ -65,7 +65,7 @@ const LoginPanel = () => {
 
   return (
     <Box
-      maxW="28rem"
+      maxW="35rem"
       mx={{base: 2, md: 'auto'}}
       p={{base: 6, md: 8}}
       borderWidth="1px"
@@ -73,8 +73,8 @@ const LoginPanel = () => {
       bg="fill-white"
     >
       <Stack as="form" onSubmit={handleSubmit(onSubmit)} gap={{base: 6, md: 10}}>
-        <Stack gap={{base: 4, md: 6}} textAlign="center">
-          <Heading fontSize={{base: 'heading.2', md: 'heading.1'}} fontWeight="heading.1">
+        <Stack gap={{base: 4, md: 6}} textAlign="start">
+          <Heading fontSize="heading.2" fontWeight="heading.1">
             {t('auth.login.heading')}
           </Heading>
           <Text fontSize="text.base" fontWeight="text.base" color="text-secondary">
@@ -108,7 +108,7 @@ const LoginPanel = () => {
                   type="button"
                   rounded="full"
                 >
-                  {isPasswordVisible ? <IconHide /> : <IconShow />}
+                  {isPasswordVisible ? <IconShow /> : <IconHide />}
                 </IconButton>
               }
               endOffset="2.75rem"
@@ -126,7 +126,7 @@ const LoginPanel = () => {
         <Box>
           <AppButton type="submit" w="full" loading={isLoading}>
             {t('auth.login.submit')}
-            <Icon as={IconForward} boxSize={4} ml={2} />
+            <Icon as={IconForward} boxSize={4} />
           </AppButton>
         </Box>
       </Stack>
