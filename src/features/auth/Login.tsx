@@ -1,8 +1,8 @@
 import {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAppSelector} from '../../hooks';
-import LoginHeader from './components/LoginHeader';
 import LoginPanel from './components/LoginPanel';
+import AppHeader from '../../components/ui/AppHeader';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Login = () => {
 
   return (
     <>
-      <LoginHeader />
+      <AppHeader />
       <LoginPanel />
     </>
   );

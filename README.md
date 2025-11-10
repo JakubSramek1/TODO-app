@@ -1,53 +1,79 @@
-# Quick Overview
+# Zentask – Todo Application
 
-- This repository is built on [Create React App](https://github.com/facebook/create-react-app) with TypeScript configuration
-- [Chakra UI](https://chakra-ui.com/) is installed as UI framework
-- For unit testing, [Jest](https://jestjs.io/) is already installed
-- You will use our prettier, eslint, and typescript config for static testing <br/> `npm run eslint && npm run prettify && npm run typecheck`
+This project is a full-stack todo application built with **React + TypeScript**, **Chakra UI v3**, and a lightweight **Express/NeDB** backend. It provides secure authentication, token refresh, and a polished task management experience.
 
-For a quick start follow these commands
+![App preview](./src/assets/readme/banner.png)
 
-```sh
+## Quick start
+
+```bash
 npm install
 npm start
 ```
 
-Then open [localhost:3000](http://localhost:3000/) to see your app.
-Or open [localhost:3001/api/docs](http://localhost:3001/api/docs) to see APIs you will be working with<br>
+This command launches:
 
----
+- the React client (`npm run start-react`) at [http://localhost:3000](http://localhost:3000)
+- the Node.js API (`npm run start-server`) at [http://localhost:3001](http://localhost:3001)
 
-![Alt text](./src/assets/readme/banner.png)
+### Testing
 
-**Your task will be to write a `To-Do app`.** <br/>
-You might think a to-do list isn't a challenge, and
-that's right, that is why we're gonna make it a little bit harder.
+Unit tests run through Jest:
 
-You can use the `Chakra UI` design system with our style theme. This means that you will create the entire task based on the [Figma specification](https://www.figma.com/file/JoD25P1n4ALPTdt1wesM1S/Zentask---Frontend-Assignment?type=design&t=qZXHzbWa37NSYGcn-6).
+```bash
+npm run test
+```
 
-The assignment will not be completely detailed, i.e. you will have to think about the details. How you handle it is up to you and we will grade you accordingly. You will be given a rough description, and figma specification.
+### Demo credentials
 
-| Title                  | 1.                                                                                                                                    | 2.                                                                                                                        | 3.                                                                           | 4.                                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Requirements**       | Chakra UI                                                                                                                             | Error handling                                                                                                            | Responsive design (let's focus on main devices, Desktop, Tablet, and Mobile) | Write utility function to get formatted current date and test with jest                   |
-| **What we appreciate** | Statefull fetching                                                                                                                                                                                               | Basic component system (Button, Checkbox, Card, etc.)                        | Task feedback from your side, feel free to add comments with questions/explanations/notes |
-| **Where we relieve**   | Don't have time to waste with fancy design or tranlations. Write a simple proof of concept and focus on the logical part of your code | Performance (let's focus on delivering a working project, we can discuss potential improvements in our online interview ) |                                                                              |                                                                                           |
+| Username | Password |
+| -------- | -------- |
+| `test`   | `test`   |
 
-### Description
+Use these credentials on the login screen to explore the application immediately.
 
-You will create a simple to-do app, with a user register and login. You will work with local BE, already pre-build in your project.
+> **Note:** Leaving the task description blank triggers an intentional validation error. This is by design to demonstrate the error-handling UX both inline and in the global banner.
 
-1. First, you will handle authentication, including login and register page.
-2. Then you create a simple todo list with all todos assigned to logged-in
-3. Each todo has quick actions button, that will reveal delete and complete actions
-4. On todo click, you will be redirected to the todo detail page
-5. On the todo detail page, you see todo in full length and have options to edit the todo as well as delete and mark it as completed
+## Application features
 
-## Important links
+### Authentication & session management
 
-- [Api docs](http://localhost:3001/api/docs) _(will work only when the project is locally started)_
-- [Figma specification](https://www.figma.com/file/JoD25P1n4ALPTdt1wesM1S/Zentask---Frontend-Assignment?type=design&t=qZXHzbWa37NSYGcn-6)
+- Login flow with Redux Toolkit, Axios, and secure token storage (access token in session storage, refresh token in local storage).
+- Automatic token refresh on 401 responses; failed refresh triggers logout.
+- Protected routes enforced via React Router.
+
+### Task management
+
+- Fetch, create, edit, toggle status, and delete todos scoped to the logged-in user.
+- React Hook Form powers the new/edit task forms with Yup validation.
+- Inline form errors and contextual error banners provide clear feedback when network issues occur.
+- A Chakra-based todo context avoids prop drilling, manages optimistic updates, and surfaces global CRUD errors.
+
+### UI/UX highlights
+
+- Chakra UI v3 components with a custom design system and responsive layouts for desktop, tablet, and mobile.
+- Reusable building blocks: `AppHeader`, `AppButton`, `TodoErrorAlert`, `TaskForm`, etc.
+- Internationalization via `react-i18next`; all user-facing copy (including error messages) lives in `src/i18n/en.json`.
+- Jest-tested date utility (`getFormattedCurrentDate`) used for the dashboard greeting.
+
+### Reliability
+
+- Local error handling in forms plus a global safe state (see todo context error banner).
+- Linting, type-checking, and Prettier configs are ready (`npm run eslint`, `npm run typecheck`, `npm run prettify`).
+
+## File structure overview
+
+- `src/app/store.ts` – Redux store configuration.
+- `src/features/auth/` – Authentication slice, thunks, and components.
+- `src/features/todos/` – Todo context, types, and API logic.
+- `src/pages/` – Page-level components (`Home`, `Login`) and UI building blocks.
+- `src/api/apiClient.ts` – Axios instance with interceptors for auth/refresh.
+- `backend/` – Express server with authentication and todo routes.
+
+## Useful links
+
+- [API docs](http://localhost:3001/api/docs) _(requires backend running)_
 - [Chakra UI](https://chakra-ui.com/)
 - [Jest](https://jestjs.io/)
 
-**That's it! Good luck!**
+Enjoy exploring the app! Contributions and feedback are welcome.

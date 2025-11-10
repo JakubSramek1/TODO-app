@@ -1,4 +1,4 @@
-import {createSystem, defaultConfig} from '@chakra-ui/react';
+import {createSystem, defaultConfig, defineRecipe} from '@chakra-ui/react';
 
 const fontSizes = {
   heading: {
@@ -23,6 +23,33 @@ const fontWeights = {
     alternative: 500,
   },
 };
+
+const buttonRecipe = defineRecipe({
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '2',
+    fontWeight: 'text.alternative',
+    borderRadius: 'full',
+    px: 5,
+    py: 3,
+    fontSize: 'text.small',
+    bg: 'fill-brand',
+    color: 'text-white',
+    transitionProperty: 'background-color, color, border-color',
+    transitionDuration: '150ms',
+    _hover: {bg: 'fill-brand-hover'},
+    _active: {bg: 'fill-brand-hover'},
+    _disabled: {
+      opacity: 0.6,
+      cursor: 'not-allowed',
+    },
+    '& svg path': {
+      fill: 'currentColor',
+    },
+  },
+});
 
 const theme = createSystem(defaultConfig, {
   theme: {
@@ -63,13 +90,10 @@ const theme = createSystem(defaultConfig, {
       },
     },
     recipes: {
-      button: {
-        base: {
-          borderRadius: 'sm',
-        },
-      },
+      button: buttonRecipe,
     },
   },
 });
 
 export default theme;
+export {buttonRecipe};

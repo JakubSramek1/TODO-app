@@ -10,7 +10,7 @@ export interface FormFieldProps {
 const FormField = ({label, required, error, children}: FormFieldProps) => (
   <Field.Root required={required} invalid={Boolean(error)}>
     {/* @ts-ignore - Field.Label is not typed correctly */}
-    <Field.Label>
+    <Field.Label fontWeight="text.base" color="text-secondary">
       <Field.RequiredIndicator color="text-danger" />
       {label}
     </Field.Label>
