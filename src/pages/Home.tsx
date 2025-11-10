@@ -1,4 +1,5 @@
 import {Box} from '@chakra-ui/react';
+import {useTranslation} from 'react-i18next';
 import AppHeader from '../components/ui/AppHeader';
 import CardWrapper from '../components/ui/CardWrapper';
 import NewTaskForm from './components/NewTaskForm';
@@ -13,6 +14,7 @@ import AppButton from '../components/ui/AppButton';
 const HomeContent = () => {
   const {isCreatingTask, editingTodo, closeEditTask} = useTodos();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
 
   const renderContent = useCallback(() => {
     if (isCreatingTask) {
@@ -40,7 +42,7 @@ const HomeContent = () => {
         {!editingTodo && !isCreatingTask && (
           <Box mt={4} display="flex" justifyContent="center">
             <AppButton onClick={handleLogout} w={{base: 'full', sm: 'auto'}}>
-              Logout
+              {t('common.buttons.logout')}
             </AppButton>
           </Box>
         )}

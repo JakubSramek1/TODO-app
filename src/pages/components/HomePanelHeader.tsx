@@ -1,21 +1,31 @@
 import {Box, Heading, Icon, Text} from '@chakra-ui/react';
+import {useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconAdd} from '../../assets/icons/icon-add.svg';
 import {useAppSelector} from '../../hooks';
 import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
+import {getFormattedCurrentDate} from '../../utils/date';
 
 const HomePanelHeader = () => {
-  const username = useAppSelector((state) => state.auth.user?.username ?? 'there');
+  const rawName = useAppSelector((state) => state.auth.user?.username);
   const {openCreateTask} = useTodos();
+  const {t, i18n} = useTranslation();
+  const username = rawName ?? t('home.panel.defaultName');
+
+  const formattedDate = useMemo(
+    () => getFormattedCurrentDate({locale: i18n.language}),
+    [i18n.language]
+  );
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="start">
-      <Box>
+      <Box display="flex" flexDirection="column" gap={2}>
         <Heading fontWeight="heading.1" fontSize="heading.2">
-          Hello, {username}!
+          {t('home.panel.greeting', {name: username})}
         </Heading>
         <Text fontSize="text.base" fontWeight="text.base" color="text-tertiary">
-          20. listopadu 2023
+          {t('home.panel.date', {date: formattedDate})}
         </Text>
       </Box>
       <AppButton
@@ -25,7 +35,7 @@ const HomePanelHeader = () => {
         alignItems="center"
         gap={2}
       >
-        Add Task
+        {t('common.buttons.addTask')}
         <Icon boxSize={4}>
           <IconAdd />
         </Icon>

@@ -1,6 +1,6 @@
 import {Box, Heading, Icon, IconButton, Input, InputGroup, Stack, Text} from '@chakra-ui/react';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import AuthErrorAlert from '../../../components/auth/AuthErrorAlert';
@@ -11,13 +11,12 @@ import {ReactComponent as IconShow} from '../../../assets/icons/icon-show.svg';
 import {ReactComponent as IconForward} from '../../../assets/icons/icon-foward.svg';
 import {loginUser} from '../authSlice';
 import AppButton from '../../../components/ui/AppButton';
+import {useTranslation} from 'react-i18next';
 
-const loginSchema = yup.object({
-  username: yup.string().trim().required('Username is required'),
-  password: yup.string().required('Password is required'),
-});
-
-type LoginFormValues = yup.InferType<typeof loginSchema>;
+type LoginFormValues = {
+  username: string;
+  password: string;
+};
 
 const defaultValues: LoginFormValues = {
   username: '',
@@ -27,22 +26,34 @@ const defaultValues: LoginFormValues = {
 const LoginPanel = () => {
   const dispatch = useAppDispatch();
   const {status, error} = useAppSelector(({auth}) => auth);
+  const {t} = useTranslation();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const validationSchema = useMemo(
+    () =>
+      yup.object({
+        username: yup.string().trim().required(t('auth.login.validation.usernameRequired')),
+        password: yup.string().required(t('auth.login.validation.passwordRequired')),
+      }),
+    [t]
+  );
 
   const {
     register,
     handleSubmit,
     formState: {errors, isSubmitting},
   } = useForm<LoginFormValues>({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues,
     mode: 'onChange',
   });
 
   const isLoading = status === 'loading' || isSubmitting;
   const hasError = !!error;
-  const passwordAriaLabel = isPasswordVisible ? 'Hide password' : 'Show password';
+  const passwordAriaLabel = isPasswordVisible
+    ? t('auth.login.password.hide')
+    : t('auth.login.password.show');
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((previous) => !previous);
@@ -64,22 +75,29 @@ const LoginPanel = () => {
       <Stack as="form" onSubmit={handleSubmit(onSubmit)} gap={{base: 6, md: 10}}>
         <Stack gap={{base: 4, md: 6}} textAlign="center">
           <Heading fontSize={{base: 'heading.2', md: 'heading.1'}} fontWeight="heading.1">
-            It’s good to have you back!
+            {t('auth.login.heading')}
           </Heading>
           <Text fontSize="text.base" fontWeight="text.base" color="text-secondary">
-            Welcome to our secure portal! To access the full functionality of our app, kindly
-            provide your credentials below. Your privacy is our priority.
+            {t('auth.login.description')}
           </Text>
         </Stack>
 
         {hasError ? <AuthErrorAlert>{error}</AuthErrorAlert> : null}
 
         <Stack gap={{base: 4, md: 6}}>
-          <FormField label="Username" required error={errors.username?.message}>
+          <FormField
+            label={t('auth.login.fields.username')}
+            required
+            error={errors.username?.message}
+          >
             <Input {...register('username')} autoComplete="username" variant="outline" />
           </FormField>
 
-          <FormField label="Password" required error={errors.password?.message}>
+          <FormField
+            label={t('auth.login.fields.password')}
+            required
+            error={errors.password?.message}
+          >
             <InputGroup
               endElement={
                 <IconButton
@@ -107,7 +125,7 @@ const LoginPanel = () => {
 
         <Box>
           <AppButton type="submit" w="full" loading={isLoading}>
-            Login
+            {t('auth.login.submit')}
             <Icon as={IconForward} boxSize={4} ml={2} />
           </AppButton>
         </Box>

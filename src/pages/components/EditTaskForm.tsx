@@ -1,4 +1,5 @@
 import {useCallback} from 'react';
+import {useTranslation} from 'react-i18next';
 import TaskForm, {TaskFormValues} from './TaskForm';
 import type {TodoSummary} from '../../features/todos/types';
 import {useTodos} from '../../features/todos/TodoContext';
@@ -10,6 +11,7 @@ interface EditTaskFormProps {
 
 const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
   const {updateTodo} = useTodos();
+  const {t} = useTranslation();
 
   const initialValues: TaskFormValues = {
     title: todo.title,
@@ -25,9 +27,9 @@ const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
 
   return (
     <TaskForm
-      heading={todo.title}
-      submitLabel="Save changes"
-      cancelLabel="Discard changes"
+      heading={t('editTask.heading')}
+      submitLabel={t('common.buttons.saveChanges')}
+      cancelLabel={t('common.buttons.discardChanges')}
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onCancel={onClose}

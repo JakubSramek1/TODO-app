@@ -1,6 +1,7 @@
 import {Box, Button, Heading, Icon, IconButton, Input, Stack, Textarea} from '@chakra-ui/react';
 import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconBack} from '../../assets/icons/icon-backwards.svg';
 import {ReactComponent as IconCheck} from '../../assets/icons/icon-check.svg';
 import FormField from '../../components/form/FormField';
@@ -29,6 +30,7 @@ const TaskForm = ({
   onCancel,
 }: TaskFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {t} = useTranslation();
 
   const {
     register,
@@ -74,7 +76,7 @@ const TaskForm = ({
         gap={{base: 4, md: 6}}
       >
         <IconButton
-          aria-label="Back to home"
+          aria-label={t('taskForm.back')}
           onClick={handleCancel}
           size="md"
           type="button"
@@ -91,20 +93,20 @@ const TaskForm = ({
       </Stack>
 
       <Stack gap={{base: 4, md: 6}}>
-        <FormField label="Task name" required error={errors.title?.message}>
+        <FormField label={t('taskForm.labels.name')} required error={errors.title?.message}>
           <Input
-            {...register('title', {required: 'Task name is required'})}
+            {...register('title', {required: t('taskForm.validation.nameRequired')})}
             variant="outline"
             borderColor={errors.title ? 'border-danger' : undefined}
             required
           />
         </FormField>
 
-        <FormField label="Description (Optional)">
+        <FormField label={t('taskForm.labels.description')}>
           <Textarea
             {...register('description')}
             variant="outline"
-            placeholder="Describe the task"
+            placeholder={t('taskForm.placeholders.description')}
             rows={4}
             resize="none"
           />

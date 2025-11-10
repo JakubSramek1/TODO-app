@@ -1,4 +1,5 @@
 import {Icon, IconButton, Menu, Portal, Text} from '@chakra-ui/react';
+import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
@@ -7,6 +8,7 @@ import {useTodos} from '../../features/todos/TodoContext';
 
 const TodoMenu = ({todo}: {todo: TodoSummary}) => {
   const {deleteTodo, openEditTask} = useTodos();
+  const {t} = useTranslation();
 
   const handleDelete = async () => {
     await deleteTodo(todo);
@@ -20,7 +22,13 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
     <Menu.Root>
       {/* @ts-ignore - Menu.Trigger is not typed properly */}
       <Menu.Trigger asChild>
-        <IconButton aria-label="Task actions" variant="ghost" rounded="full" minW="8" h="8">
+        <IconButton
+          aria-label={t('todoMenu.actions')}
+          variant="ghost"
+          rounded="full"
+          minW="8"
+          h="8"
+        >
           <Icon as={IconMore} boxSize={4} />
         </IconButton>
       </Menu.Trigger>
@@ -33,7 +41,7 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
             <Menu.Item value="edit" gap={3} py={2} onClick={handleEdit}>
               <IconEdit />
               <Text fontSize="text.base" fontWeight="text.base" color="text-primary">
-                Edit
+                {t('todoMenu.edit')}
               </Text>
             </Menu.Item>
             {/* @ts-ignore - Menu.Trigger is not typed properly */}
@@ -45,7 +53,7 @@ const TodoMenu = ({todo}: {todo: TodoSummary}) => {
               onClick={handleDelete}
             >
               <Icon as={IconDelete} boxSize={4} />
-              <Text color="text-danger">Delete</Text>
+              <Text color="text-danger">{t('todoMenu.delete')}</Text>
             </Menu.Item>
           </Menu.Content>
         </Menu.Positioner>
