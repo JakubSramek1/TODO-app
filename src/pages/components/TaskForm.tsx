@@ -64,9 +64,9 @@ const TaskForm = ({
       gap={{base: 6, md: 10}}
     >
       <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent={{base: 'justify-between', md: 'flex-start'}}
+        direction={{base: 'column', md: 'row'}}
+        alignItems={{base: 'flex-start', md: 'center'}}
+        justifyContent="flex-start"
         gap={{base: 4, md: 6}}
       >
         <IconButton
@@ -111,7 +111,7 @@ const TaskForm = ({
         direction={{base: 'column-reverse', md: 'row'}}
         justifyContent={{base: 'flex-start', md: 'space-between'}}
         alignItems={{base: 'stretch', md: 'center'}}
-        gap={{base: 4, md: 6}}
+        gap={{base: 2, md: 6}}
       >
         <Button
           bg="fill-gray"

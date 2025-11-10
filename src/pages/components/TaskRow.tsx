@@ -11,7 +11,7 @@ type TaskRowProps = {
 
 const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
   <Box display="flex" justifyContent="space-between" alignItems="center" py={4} gap={4}>
-    <Stack direction="row" alignItems="center" gap={4} flex="1">
+    <Stack direction="row" alignItems="start" gap={4} flex="1">
       <TodoStatusCheckbox
         checked={completed}
         label={todo.title}

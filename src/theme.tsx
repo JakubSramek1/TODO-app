@@ -34,7 +34,7 @@ const buttonRecipe = defineRecipe({
     borderRadius: 'full',
     px: 5,
     py: 3,
-    fontSize: 'text.base',
+    fontSize: 'text.small',
     bg: 'fill-brand',
     color: 'text-white',
     transitionProperty: 'background-color, color, border-color',

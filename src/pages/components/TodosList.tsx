@@ -13,7 +13,7 @@ const TodosList = () => {
   const completed = todos.filter((todo) => todo.completed);
 
   return (
-    <Box display="flex" flexDirection="column" gap={10}>
+    <Box display="flex" flexDirection="column" gap={{base: 6, md: 10}}>
       <HomePanelHeader />
       {pending.length > 0 ? (
         <TaskSection title={t('todos.sections.todo')} items={pending} />

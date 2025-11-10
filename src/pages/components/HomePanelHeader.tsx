@@ -6,9 +6,10 @@ import {useAppSelector} from '../../hooks';
 import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
 import {getFormattedCurrentDate} from '../../utils/date';
+import {selectUsername} from '../../features/auth/authSlice';
 
 const HomePanelHeader = () => {
-  const rawName = useAppSelector((state) => state.auth.user?.username);
+  const rawName = useAppSelector(selectUsername);
   const {openCreateTask} = useTodos();
   const {t, i18n} = useTranslation();
   const username = rawName ?? t('home.panel.defaultName');
@@ -19,7 +20,13 @@ const HomePanelHeader = () => {
   );
 
   return (
-    <Box display="flex" justifyContent="space-between" alignItems="start">
+    <Box
+      display="flex"
+      flexDirection={{base: 'column', md: 'row'}}
+      justifyContent="space-between"
+      alignItems="start"
+      gap={{base: 4, md: 0}}
+    >
       <Box display="flex" flexDirection="column" gap={2}>
         <Heading fontWeight="heading.1" fontSize="heading.2">
           {t('home.panel.greeting', {name: username})}
@@ -34,6 +41,7 @@ const HomePanelHeader = () => {
         display="inline-flex"
         alignItems="center"
         gap={2}
+        w={{base: 'full', md: 'auto'}}
       >
         {t('common.buttons.addTask')}
         <Icon boxSize={4}>

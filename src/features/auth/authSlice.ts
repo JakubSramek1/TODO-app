@@ -273,9 +273,9 @@ const authSlice = createSlice({
 
 export const {setTokens} = authSlice.actions;
 
-export const selectAuthState = (state: RootState) => state.auth;
-export const selectIsAuthenticated = (state: RootState) => Boolean(state.auth.accessToken);
 export const selectAccessToken = (state: RootState) => state.auth.accessToken ?? undefined;
 export const selectRefreshToken = (state: RootState) => state.auth.refreshToken ?? undefined;
+export const selectUsername = (state: RootState) => state.auth.user?.username;
+export const selectAccessTokenOrNull = (state: RootState) => state.auth.accessToken;
 
 export default authSlice.reducer;
