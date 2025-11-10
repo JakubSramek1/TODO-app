@@ -5,7 +5,6 @@ export type GetFormattedDateOptions = {
 const DEFAULT_LOCALE = 'cs-CZ';
 
 export const formatDate = (date: Date, {locale = DEFAULT_LOCALE}: GetFormattedDateOptions = {}) => {
-  console.log(locale);
   return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'long',
