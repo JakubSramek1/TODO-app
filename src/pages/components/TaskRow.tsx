@@ -28,11 +28,10 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
             overflow="hidden"
             display="-webkit-box"
             css={{
-              WebkitLineClamp: 1,
+              WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               textOverflow: 'ellipsis',
             }}
-            maxW={{base: '14rem', md: '22.5rem'}}
           >
             {todo.description}
           </Text>
