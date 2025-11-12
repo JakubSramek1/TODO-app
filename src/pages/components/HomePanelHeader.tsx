@@ -2,17 +2,16 @@ import {Box, Heading, Icon, Text} from '@chakra-ui/react';
 import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconAdd} from '../../assets/icons/icon-add.svg';
-import {useAppSelector} from '../../hooks';
 import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
 import {getFormattedCurrentDate} from '../../utils/date';
-import {selectUsername} from '../../features/auth/authSlice';
+import {useAuth} from '../../features/auth/AuthContext';
 
 const HomePanelHeader = () => {
-  const rawName = useAppSelector(selectUsername);
+  const {user} = useAuth();
   const {openCreateTask} = useTodos();
   const {t, i18n} = useTranslation();
-  const username = rawName ?? t('home.panel.defaultName');
+  const username = user?.username ?? t('home.panel.defaultName');
 
   const formattedDate = useMemo(
     () => getFormattedCurrentDate({locale: i18n.language}),

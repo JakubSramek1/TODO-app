@@ -1,16 +1,18 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import apiClient from '../../api/apiClient';
-import {useAppSelector} from '../../hooks';
+import {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import type {CreateTodoPayload, TodoSummary} from './types';
-import i18n from '../../i18n/i18n';
+import {useAuth} from '../auth/AuthContext';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {
+  createTodo as createTodoRequest,
+  deleteTodo as deleteTodoRequest,
+  fetchTodos,
+  toggleTodoStatus as toggleTodoStatusRequest,
+  updateTodo as updateTodoRequest,
+} from '../../api/todoApi';
+import type {AxiosError} from 'axios';
+
+const TODOS_QUERY_KEY = ['todos'];
 
 interface TodoContextValue {
   todos: TodoSummary[];
@@ -34,45 +36,86 @@ interface TodoContextValue {
 const TodoContext = createContext<TodoContextValue | undefined>(undefined);
 
 export const TodoProvider = ({children}: {children: ReactNode}) => {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const [todos, setTodos] = useState<TodoSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const {accessToken, logout} = useAuth();
+  const {t} = useTranslation();
+  const queryClient = useQueryClient();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-  const [editingTodo, setEditingTodo] = useState<TodoSummary | null>(null);
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTodos = useCallback(async () => {
-    if (!accessToken) {
-      setTodos([]);
-      setEditingTodo(null);
-      return;
-    }
+  const {
+    data: todos = [],
+    isPending: isTodosPending,
+    isFetching: isTodosFetching,
+    error: todosError,
+    refetch,
+  } = useQuery({
+    queryKey: TODOS_QUERY_KEY,
+    queryFn: fetchTodos,
+    enabled: Boolean(accessToken),
+    retry: 1,
+  });
 
-    setIsLoading(true);
-    try {
-      const response = await apiClient.get<{todos: TodoSummary[]}>('/todo/list', {
-        headers: {Authorization: `Bearer ${accessToken}`},
-      });
-      const nextTodos = response.data.todos ?? [];
-      setTodos(nextTodos);
-      setEditingTodo((current) => {
-        setError(null);
-        if (!current) return null;
-        return nextTodos.find((todo) => todo.id === current.id) ?? null;
-      });
-    } catch (error) {
-      console.error('Failed to load todos', error);
-      setTodos([]);
-      setEditingTodo(null);
-      setError(i18n.t('todos.errors.fetchFailed'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [accessToken]);
+  const createTodoMutation = useMutation({
+    mutationFn: createTodoRequest,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: TODOS_QUERY_KEY});
+    },
+  });
+
+  const updateTodoMutation = useMutation({
+    mutationFn: ({id, payload}: {id: string; payload: CreateTodoPayload}) =>
+      updateTodoRequest(id, payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: TODOS_QUERY_KEY});
+    },
+  });
+
+  const toggleTodoStatusMutation = useMutation({
+    mutationFn: ({id, completed}: {id: string; completed: boolean}) =>
+      toggleTodoStatusRequest(id, completed),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: TODOS_QUERY_KEY});
+    },
+  });
+
+  const deleteTodoMutation = useMutation({
+    mutationFn: deleteTodoRequest,
+    onSuccess: async (_, id) => {
+      setEditingTodoId((current) => (current === id ? null : current));
+      await queryClient.invalidateQueries({queryKey: TODOS_QUERY_KEY});
+    },
+  });
+
+  const isMutating =
+    createTodoMutation.isPending ||
+    updateTodoMutation.isPending ||
+    toggleTodoStatusMutation.isPending ||
+    deleteTodoMutation.isPending;
+
+  const isLoading = isTodosPending || isTodosFetching || isMutating;
 
   useEffect(() => {
-    void fetchTodos();
-  }, [fetchTodos]);
+    if (!accessToken) {
+      setIsCreatingTask(false);
+      setEditingTodoId(null);
+      setError(null);
+      queryClient.removeQueries({queryKey: TODOS_QUERY_KEY});
+    }
+  }, [accessToken, queryClient]);
+
+  useEffect(() => {
+    if (todosError) {
+      console.error('Failed to load todos', todosError);
+      setError(t('todos.errors.fetchFailed'));
+      const axiosError = todosError as AxiosError<{message?: string; error?: string}>;
+      if (axiosError.response?.status === 401) {
+        logout();
+      }
+    } else if (!isTodosFetching) {
+      setError((current) => (current === t('todos.errors.fetchFailed') ? null : current));
+    }
+  }, [todosError, t, isTodosFetching, logout]);
 
   const openCreateTask = useCallback(() => {
     setIsCreatingTask(true);
@@ -83,11 +126,11 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
   }, []);
 
   const openEditTask = useCallback((todo: TodoSummary) => {
-    setEditingTodo(todo);
+    setEditingTodoId(todo.id);
   }, []);
 
   const closeEditTask = useCallback(() => {
-    setEditingTodo(null);
+    setEditingTodoId(null);
   }, []);
 
   const createTodo = useCallback(
@@ -98,24 +141,19 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
 
       setError(null);
       try {
-        await apiClient.post(
-          '/todo',
-          {
-            title: payload.title,
-            description: payload.description ?? '',
-          },
-          {headers: {Authorization: `Bearer ${accessToken}`}}
-        );
+        await createTodoMutation.mutateAsync({
+          title: payload.title,
+          description: payload.description ?? '',
+        });
         closeCreateTask();
-        await fetchTodos();
         setError(null);
-      } catch (error) {
-        console.error('Failed to create task', error);
-        setError(i18n.t('todos.errors.createFailed'));
-        throw error;
+      } catch (err) {
+        console.error('Failed to create task', err);
+        setError(t('todos.errors.createFailed'));
+        throw err;
       }
     },
-    [accessToken, fetchTodos, closeCreateTask]
+    [accessToken, closeCreateTask, createTodoMutation, t]
   );
 
   const updateTodo = useCallback(
@@ -126,25 +164,22 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
 
       setError(null);
       try {
-        await apiClient.put(
-          `/todo/${id}`,
-          {
+        await updateTodoMutation.mutateAsync({
+          id,
+          payload: {
             title: payload.title,
             description: payload.description ?? '',
           },
-          {headers: {Authorization: `Bearer ${accessToken}`}}
-        );
-        await fetchTodos();
+        });
         closeEditTask();
         setError(null);
-      } catch (error) {
-        console.error('Failed to update task', error);
-        await fetchTodos();
-        setError(i18n.t('todos.errors.updateFailed'));
-        throw error;
+      } catch (err) {
+        console.error('Failed to update task', err);
+        setError(t('todos.errors.updateFailed'));
+        throw err;
       }
     },
-    [accessToken, fetchTodos, closeEditTask]
+    [accessToken, closeEditTask, t, updateTodoMutation]
   );
 
   const toggleTodoStatus = useCallback(
@@ -154,18 +189,18 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       }
 
       setError(null);
-      setTodos((prev) => prev.map((item) => (item.id === todo.id ? {...item, completed} : item)));
       try {
-        const endpoint = `/todo/${todo.id}/${completed ? 'complete' : 'incomplete'}`;
-        await apiClient.post(endpoint, {}, {headers: {Authorization: `Bearer ${accessToken}`}});
+        await toggleTodoStatusMutation.mutateAsync({
+          id: todo.id,
+          completed,
+        });
         setError(null);
-      } catch (error) {
-        console.error('Failed to update task status', error);
-        await fetchTodos();
-        setError(i18n.t('todos.errors.toggleFailed'));
+      } catch (err) {
+        console.error('Failed to update task status', err);
+        setError(t('todos.errors.toggleFailed'));
       }
     },
-    [accessToken, fetchTodos]
+    [accessToken, t, toggleTodoStatusMutation]
   );
 
   const deleteTodo = useCallback(
@@ -175,30 +210,30 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       }
 
       setError(null);
-      setTodos((prev) => prev.filter((item) => item.id !== todo.id));
-      setEditingTodo((current) => (current?.id === todo.id ? null : current));
       try {
-        await apiClient.delete(`/todo/${todo.id}`, {
-          headers: {Authorization: `Bearer ${accessToken}`},
-        });
+        await deleteTodoMutation.mutateAsync(todo.id);
         setError(null);
-      } catch (error) {
-        console.error('Failed to delete task', error);
-        await fetchTodos();
-        setError(i18n.t('todos.errors.deleteFailed'));
+      } catch (err) {
+        console.error('Failed to delete task', err);
+        setError(t('todos.errors.deleteFailed'));
       }
     },
-    [accessToken, fetchTodos]
+    [accessToken, deleteTodoMutation, t]
   );
 
   const clearError = useCallback(() => setError(null), []);
+
+  const editingTodo = useMemo(
+    () => (editingTodoId ? todos.find((todo) => todo.id === editingTodoId) ?? null : null),
+    [editingTodoId, todos]
+  );
 
   const value = useMemo<TodoContextValue>(
     () => ({
       todos,
       isLoading,
       isCreatingTask,
-      editingTodoId: editingTodo?.id ?? null,
+      editingTodoId,
       editingTodo,
       openCreateTask,
       closeCreateTask,
@@ -208,7 +243,9 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       updateTodo,
       toggleTodoStatus,
       deleteTodo,
-      refreshTodos: fetchTodos,
+      refreshTodos: async () => {
+        await refetch();
+      },
       error,
       clearError,
     }),
@@ -216,7 +253,7 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       todos,
       isLoading,
       isCreatingTask,
-      editingTodo,
+      editingTodoId,
       openCreateTask,
       closeCreateTask,
       openEditTask,
@@ -225,7 +262,8 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
       updateTodo,
       toggleTodoStatus,
       deleteTodo,
-      fetchTodos,
+      editingTodo,
+      refetch,
       error,
       clearError,
     ]

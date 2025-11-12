@@ -6,32 +6,14 @@ import NewTaskForm from './components/NewTaskForm';
 import TodoOverview from './components/TodoOverview';
 import {TodoProvider, useTodos} from '../features/todos/TodoContext';
 import EditTaskForm from './components/EditTaskForm';
-import {useAppDispatch} from '../hooks';
-import {logout} from '../features/auth/authSlice';
-import {useCallback} from 'react';
 import AppButton from '../components/ui/AppButton';
 import TodoErrorAlert from './components/TodoErrorAlert';
+import {useAuth} from '../features/auth/AuthContext';
 
 const HomeContent = () => {
   const {isCreatingTask, editingTodo, closeEditTask, error, clearError} = useTodos();
-  const dispatch = useAppDispatch();
+  const {logout} = useAuth();
   const {t} = useTranslation();
-
-  const renderContent = useCallback(() => {
-    if (isCreatingTask) {
-      return <NewTaskForm />;
-    }
-
-    if (editingTodo) {
-      return <EditTaskForm todo={editingTodo} onClose={closeEditTask} />;
-    }
-
-    return <TodoOverview />;
-  }, [isCreatingTask, editingTodo, closeEditTask]);
-
-  const handleLogout = useCallback(() => {
-    void dispatch(logout());
-  }, [dispatch]);
 
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
@@ -40,12 +22,18 @@ const HomeContent = () => {
         <Box maxW="45rem" mx="auto" display="flex" flexDirection="column" gap={4}>
           {error ? <TodoErrorAlert message={error} onDismiss={clearError} /> : null}
           <CardWrapper w="full" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
-            {renderContent()}
+            {isCreatingTask ? (
+              <NewTaskForm />
+            ) : editingTodo ? (
+              <EditTaskForm todo={editingTodo} onClose={closeEditTask} />
+            ) : (
+              <TodoOverview />
+            )}
           </CardWrapper>
         </Box>
         {!editingTodo && !isCreatingTask && (
           <Box mt={4} display="flex" justifyContent="center">
-            <AppButton onClick={handleLogout} w={{base: 'full', sm: 'auto'}}>
+            <AppButton onClick={logout} w={{base: 'full', sm: 'auto'}}>
               {t('common.buttons.logout')}
             </AppButton>
           </Box>

@@ -1,8 +1,8 @@
 import {Avatar, Box, Text} from '@chakra-ui/react';
-import {useAppSelector} from '../../hooks';
+import {useAuth} from '../../features/auth/AuthContext';
 
 const AppAvatar = () => {
-  const user = useAppSelector((state) => state.auth.user);
+  const {user} = useAuth();
 
   if (!user) {
     return null;

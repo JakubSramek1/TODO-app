@@ -24,6 +24,7 @@
   "common.buttons.cancel": "Cancel",
   "common.buttons.dismiss": "Dismiss",
   "common.loading": "Loading…",
+  "common.errors.unexpected": "Something went wrong. Please try again.",
   "home.panel.greeting": "Hello, {{name}}!",
   "home.panel.date": "{{date}}",
   "home.panel.defaultName": "there",

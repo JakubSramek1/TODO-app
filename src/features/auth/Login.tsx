@@ -1,12 +1,12 @@
 import {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {useAppSelector} from '../../hooks';
 import LoginPanel from './components/LoginPanel';
 import AppHeader from '../../components/ui/AppHeader';
+import {useAuth} from './AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const {accessToken} = useAppSelector(({auth}) => auth);
+  const {accessToken} = useAuth();
 
   useEffect(() => {
     if (accessToken) {

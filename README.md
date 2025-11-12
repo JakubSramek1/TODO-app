@@ -1,6 +1,6 @@
 # Zentask – Todo Application
 
-This project is a full-stack todo application built with **React + TypeScript**, **Chakra UI v3**, and a lightweight **Express/NeDB** backend. It provides secure authentication, token refresh, and a polished task management experience.
+This project is a full-stack todo application built with **React + TypeScript**, **Chakra UI v3**, and a lightweight **Express/NeDB** backend. It provides secure authentication and a polished task management experience.
 
 ![App preview](./src/assets/readme/banner.png)
 
@@ -38,8 +38,8 @@ Use these credentials on the login screen to explore the application immediately
 
 ### Authentication & session management
 
-- Login flow with Redux Toolkit, Axios, and secure token storage (access token in session storage, refresh token in local storage).
-- Automatic token refresh on 401 responses; failed refresh triggers logout.
+- Login and registration handled via React Query mutations and a dedicated `AuthContext`.
+- Secure token storage (access token in session storage, refresh token in local storage) with automatic Axios header syncing.
 - Protected routes enforced via React Router.
 
 ### Task management
@@ -47,7 +47,7 @@ Use these credentials on the login screen to explore the application immediately
 - Fetch, create, edit, toggle status, and delete todos scoped to the logged-in user.
 - React Hook Form powers the new/edit task forms with Yup validation.
 - Inline form errors and contextual error banners provide clear feedback when network issues occur.
-- A Chakra-based todo context avoids prop drilling, manages optimistic updates, and surfaces global CRUD errors.
+- A Chakra-based todo context backed by React Query avoids prop drilling and centralises CRUD error handling.
 
 ### UI/UX highlights
 
@@ -63,11 +63,11 @@ Use these credentials on the login screen to explore the application immediately
 
 ## File structure overview
 
-- `src/app/store.ts` – Redux store configuration.
-- `src/features/auth/` – Authentication slice, thunks, and components.
-- `src/features/todos/` – Todo context, types, and API logic.
+- `src/app/queryClient.ts` – Shared React Query client configuration.
+- `src/api/` – Axios client plus auth and todo API helpers.
+- `src/features/auth/` – Auth context, types, and feature components.
+- `src/features/todos/` – Todo context, types, and React Query integrations.
 - `src/pages/` – Page-level components (`Home`, `Login`) and UI building blocks.
-- `src/api/apiClient.ts` – Axios instance with interceptors for auth/refresh.
 - `backend/` – Express server with authentication and todo routes.
 
 ## Useful links
