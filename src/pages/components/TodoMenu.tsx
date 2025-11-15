@@ -4,9 +4,7 @@ import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
 import {useTodos} from '../../features/todos/TodoContext';
-import {useMutation} from '@tanstack/react-query';
 import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
-import {useCallback} from 'react';
 import {deleteTodo} from '../../api/todoApi';
 
 type TodoMenuProps = {
@@ -14,19 +12,17 @@ type TodoMenuProps = {
 };
 
 const TodoMenu = ({todoId}: TodoMenuProps) => {
-  const {openEditTask} = useTodos();
+  const {setEditingTodoId} = useTodos();
   const {t} = useTranslation();
 
-  const deleteTodoMutation = useMutation({
-    mutationFn: deleteTodo,
-  });
-
-  const handleDelete = useCallback(async () => {
-    await useTodoMutation(deleteTodoMutation.mutateAsync, todoId);
-  }, [deleteTodoMutation]);
+  const deleteTodoMutation = useTodoMutation(deleteTodo);
 
   const handleEdit = () => {
-    openEditTask(todoId);
+    setEditingTodoId(todoId);
+  };
+
+  const handleDelete = async () => {
+    await deleteTodoMutation.mutateAsync(todoId);
   };
 
   return (

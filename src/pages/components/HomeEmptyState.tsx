@@ -10,7 +10,7 @@ type HomeEmptyStateProps = {
 };
 
 const HomeEmptyState = ({todos}: HomeEmptyStateProps) => {
-  const {openCreateTask} = useTodos();
+  const {setEditingTodoId} = useTodos();
   const {t} = useTranslation();
 
   return (
@@ -36,7 +36,9 @@ const HomeEmptyState = ({todos}: HomeEmptyStateProps) => {
         {t('home.empty.description')}
       </Text>
       {!todos?.length ? (
-        <AppButton onClick={openCreateTask}>{t('common.buttons.createFirstTask')}</AppButton>
+        <AppButton onClick={() => setEditingTodoId('0')}>
+          {t('common.buttons.createFirstTask')}
+        </AppButton>
       ) : null}
     </Box>
   );

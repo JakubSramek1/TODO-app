@@ -9,7 +9,7 @@ import {useAuth} from '../../features/auth/AuthContext';
 
 const HomePanelHeader = () => {
   const {user} = useAuth();
-  const {openCreateTask} = useTodos();
+  const {setEditingTodoId} = useTodos();
   const {t, i18n} = useTranslation();
   const username = user?.username ?? t('home.panel.defaultName');
 
@@ -36,7 +36,7 @@ const HomePanelHeader = () => {
       </Box>
       <AppButton
         css={{'& svg path': {fill: 'currentColor'}}}
-        onClick={openCreateTask}
+        onClick={() => setEditingTodoId('0')}
         display="inline-flex"
         alignItems="center"
         gap={2}

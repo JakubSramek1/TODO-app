@@ -11,7 +11,7 @@ import TodoErrorAlert from './components/TodoErrorAlert';
 import {useAuth} from '../features/auth/AuthContext';
 
 const HomeContent = () => {
-  const {isCreatingTask, editingTodoId, closeEditTask, error, clearError} = useTodos();
+  const {editingTodoId, setEditingTodoId, error, clearError} = useTodos();
   const {logout} = useAuth();
   const {t} = useTranslation();
 
@@ -22,16 +22,16 @@ const HomeContent = () => {
         <Box maxW="45rem" mx="auto" display="flex" flexDirection="column" gap={4}>
           {error ? <TodoErrorAlert message={error} onDismiss={clearError} /> : null}
           <CardWrapper w="full" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
-            {isCreatingTask ? (
+            {editingTodoId === '0' ? (
               <NewTaskForm />
             ) : editingTodoId ? (
-              <EditTaskForm todoId={editingTodoId} onClose={closeEditTask} />
+              <EditTaskForm todoId={editingTodoId} onClose={() => setEditingTodoId(null)} />
             ) : (
               <TodoOverview />
             )}
           </CardWrapper>
         </Box>
-        {!editingTodoId && !isCreatingTask && (
+        {!editingTodoId && (
           <Box mt={4} display="flex" justifyContent="center">
             <AppButton onClick={logout} w={{base: 'full', sm: 'auto'}}>
               {t('common.buttons.logout')}

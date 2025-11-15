@@ -15,7 +15,7 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
       <TodoStatusCheckbox
         checked={completed}
         label={todo.title}
-        onChange={(next) => onToggleStatus(todo, next)}
+        onChange={(completed) => onToggleStatus(todo, completed)}
       />
       <Box>
         <Text fontWeight="heading.2" color="text-primary">

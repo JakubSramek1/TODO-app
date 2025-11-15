@@ -1,12 +1,10 @@
-import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import TaskForm, {TaskFormValues} from './TaskForm';
-import {useMutation} from '@tanstack/react-query';
 import {fetchTodo, updateTodo as updateTodoRequest} from '../../api/todoApi';
-import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 import {useTodos} from '../../features/todos/TodoContext';
 import {useTodosQuery} from '../../features/todos/useTodosQuery';
 import TodosListSkeleton from './TodosListSkeleton';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 
 interface EditTaskFormProps {
   todoId: string;
@@ -15,7 +13,7 @@ interface EditTaskFormProps {
 
 const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
   const {t} = useTranslation();
-  const {closeEditTask} = useTodos();
+  const {setEditingTodoId} = useTodos();
 
   const {
     data: todo,
@@ -23,26 +21,19 @@ const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
     // error: todosError,
   } = useTodosQuery(() => fetchTodo(todoId), [todoId]);
 
-  const updateTodoMutation = useMutation({
-    mutationFn: updateTodoRequest,
-  });
+  const handleCancel = () => {
+    setEditingTodoId(null);
+  };
 
-  const handleSubmit = useCallback(
-    async (payload: TaskFormValues) => {
-      if (todo) {
-        await useTodoMutation(
-          updateTodoMutation.mutateAsync,
-          {
-            id: todoId,
-            title: payload.title,
-            description: payload.description ?? '',
-          },
-          closeEditTask
-        );
-      }
-    },
-    [updateTodoMutation]
-  );
+  const updateTodoMutation = useTodoMutation(updateTodoRequest, handleCancel);
+
+  const handleSubmit = async (payload: TaskFormValues) => {
+    await updateTodoMutation.mutateAsync({
+      id: todoId,
+      title: payload.title,
+      description: payload.description ?? '',
+    });
+  };
 
   if (isTodoLoading) {
     return <TodosListSkeleton />;
@@ -56,8 +47,6 @@ const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
     title: todo.title,
     description: todo.description ?? '',
   };
-
-  console.log(todo, initialValues);
 
   return (
     <TaskForm

@@ -1,11 +1,8 @@
-import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import TaskForm, {TaskFormValues} from './TaskForm';
 import {useTodos} from '../../features/todos/TodoContext';
-import {CreateTodoPayload} from '../../features/todos/types';
-import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
-import {useMutation} from '@tanstack/react-query';
 import {createTodo as createTodoRequest} from '../../api/todoApi';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 
 const initialValues: TaskFormValues = {
   title: '',
@@ -13,33 +10,28 @@ const initialValues: TaskFormValues = {
 };
 
 const NewTaskForm = () => {
-  const {closeCreateTask} = useTodos();
+  const {setEditingTodoId} = useTodos();
   const {t} = useTranslation();
 
-  const createTodoMutation = useMutation({
-    mutationFn: createTodoRequest,
-  });
+  const handleCancel = () => {
+    setEditingTodoId(null);
+  };
 
-  const handleSubmit = useCallback(
-    async (payload: CreateTodoPayload) => {
-      await useTodoMutation(
-        createTodoMutation.mutateAsync,
-        {
-          title: payload.title,
-          description: payload.description ?? '',
-        },
-        closeCreateTask
-      );
-    },
-    [closeCreateTask, createTodoMutation]
-  );
+  const createTodoMutation = useTodoMutation(createTodoRequest, handleCancel);
+
+  const handleSubmit = async (payload: TaskFormValues) => {
+    await createTodoMutation.mutateAsync({
+      title: payload.title,
+      description: payload.description ?? '',
+    });
+  };
 
   return (
     <TaskForm
       heading={t('newTask.heading')}
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onCancel={closeCreateTask}
+      onCancel={handleCancel}
     />
   );
 };
