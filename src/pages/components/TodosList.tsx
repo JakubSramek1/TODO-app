@@ -6,9 +6,13 @@ import type {TodoSummary} from '../../features/todos/types';
 import HomeEmptyState from './HomeEmptyState';
 import TaskRow from './TaskRow';
 
-const TodosList = () => {
-  const {todos} = useTodos();
+type TodosListProps = {
+  todos: TodoSummary[];
+};
+
+const TodosList = ({todos}: TodosListProps) => {
   const {t} = useTranslation();
+
   const pending = todos.filter((todo) => !todo.completed);
   const completed = todos.filter((todo) => todo.completed);
 
@@ -18,7 +22,7 @@ const TodosList = () => {
       {pending.length > 0 ? (
         <TaskSection title={t('todos.sections.todo')} items={pending} />
       ) : (
-        <HomeEmptyState />
+        <HomeEmptyState todos={todos} />
       )}
       <TaskSection title={t('todos.sections.completed')} items={completed} completed />
     </Box>

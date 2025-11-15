@@ -38,7 +38,7 @@ const TaskRow = ({todo, completed, onToggleStatus}: TaskRowProps) => (
         ) : null}
       </Box>
     </Stack>
-    <TodoMenu todo={todo} />
+    <TodoMenu todoId={todo.id} />
   </Box>
 );
 

@@ -1,5 +1,5 @@
 import httpClient from './httpClient';
-import type {CreateTodoPayload, TodoSummary} from '../features/todos/types';
+import type {CreateTodoPayload, TodoSummary, UpdateTodoPayload} from '../features/todos/types';
 
 interface TodoListResponse {
   todos: TodoSummary[];
@@ -10,6 +10,11 @@ export const fetchTodos = async () => {
   return response.data.todos ?? [];
 };
 
+export const fetchTodo = async (todoId: string) => {
+  const response = await httpClient.get<TodoSummary>(`/todo/${todoId}`);
+  return response.data ?? null;
+};
+
 export const createTodo = async (payload: CreateTodoPayload) => {
   await httpClient.post('/todo', {
     title: payload.title,
@@ -17,8 +22,8 @@ export const createTodo = async (payload: CreateTodoPayload) => {
   });
 };
 
-export const updateTodo = async (id: string, payload: CreateTodoPayload) => {
-  await httpClient.put(`/todo/${id}`, {
+export const updateTodo = async (payload: UpdateTodoPayload) => {
+  await httpClient.put(`/todo/${payload.id}`, {
     title: payload.title,
     description: payload.description ?? '',
   });

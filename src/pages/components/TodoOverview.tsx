@@ -1,22 +1,26 @@
-import {Text} from '@chakra-ui/react';
-import {useTranslation} from 'react-i18next';
 import HomeEmptyState from './HomeEmptyState';
 import TodosList from './TodosList';
-import {useTodos} from '../../features/todos/TodoContext';
+import {fetchTodos} from '../../api/todoApi';
+import TodosListSkeleton from './TodosListSkeleton';
+import {useTodosQuery} from '../../features/todos/useTodosQuery';
+import {TODOS_QUERY_KEY} from '../../features/todos/TodoContext';
 
 const TodoOverview = () => {
-  const {todos, isLoading} = useTodos();
-  const {t} = useTranslation();
+  const {
+    data: todos = [],
+    isPending: isTodosPending,
+    // error: todosError,
+  } = useTodosQuery(fetchTodos, TODOS_QUERY_KEY);
 
-  if (isLoading) {
-    return <Text color="text-secondary">{t('todos.loading')}</Text>;
+  if (isTodosPending) {
+    return <TodosListSkeleton />;
   }
 
   if (todos.length === 0) {
     return <HomeEmptyState />;
   }
 
-  return <TodosList />;
+  return <TodosList todos={todos} />;
 };
 
 export default TodoOverview;

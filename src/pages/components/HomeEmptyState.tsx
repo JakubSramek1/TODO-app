@@ -3,9 +3,14 @@ import {useTranslation} from 'react-i18next';
 import PlaceholderImage from '../../assets/Image1.svg';
 import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
+import {TodoSummary} from '../../features/todos/types';
 
-const HomeEmptyState = () => {
-  const {openCreateTask, todos} = useTodos();
+type HomeEmptyStateProps = {
+  todos?: TodoSummary[];
+};
+
+const HomeEmptyState = ({todos}: HomeEmptyStateProps) => {
+  const {openCreateTask} = useTodos();
   const {t} = useTranslation();
 
   return (
@@ -30,7 +35,7 @@ const HomeEmptyState = () => {
       <Text fontSize="text.base" fontWeight="text.base" color="text-tertiary">
         {t('home.empty.description')}
       </Text>
-      {!todos.length ? (
+      {!todos?.length ? (
         <AppButton onClick={openCreateTask}>{t('common.buttons.createFirstTask')}</AppButton>
       ) : null}
     </Box>

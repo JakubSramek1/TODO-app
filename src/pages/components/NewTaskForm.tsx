@@ -2,6 +2,10 @@ import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import TaskForm, {TaskFormValues} from './TaskForm';
 import {useTodos} from '../../features/todos/TodoContext';
+import {CreateTodoPayload} from '../../features/todos/types';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
+import {useMutation} from '@tanstack/react-query';
+import {createTodo as createTodoRequest} from '../../api/todoApi';
 
 const initialValues: TaskFormValues = {
   title: '',
@@ -9,14 +13,25 @@ const initialValues: TaskFormValues = {
 };
 
 const NewTaskForm = () => {
-  const {createTodo, closeCreateTask} = useTodos();
+  const {closeCreateTask} = useTodos();
   const {t} = useTranslation();
 
+  const createTodoMutation = useMutation({
+    mutationFn: createTodoRequest,
+  });
+
   const handleSubmit = useCallback(
-    async (values: TaskFormValues) => {
-      await createTodo(values);
+    async (payload: CreateTodoPayload) => {
+      await useTodoMutation(
+        createTodoMutation.mutateAsync,
+        {
+          title: payload.title,
+          description: payload.description ?? '',
+        },
+        closeCreateTask
+      );
     },
-    [createTodo]
+    [closeCreateTask, createTodoMutation]
   );
 
   return (

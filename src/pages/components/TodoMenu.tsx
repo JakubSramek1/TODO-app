@@ -3,19 +3,30 @@ import {useTranslation} from 'react-i18next';
 import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
-import {TodoSummary} from '../../features/todos/types';
 import {useTodos} from '../../features/todos/TodoContext';
+import {useMutation} from '@tanstack/react-query';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
+import {useCallback} from 'react';
+import {deleteTodo} from '../../api/todoApi';
 
-const TodoMenu = ({todo}: {todo: TodoSummary}) => {
-  const {deleteTodo, openEditTask} = useTodos();
+type TodoMenuProps = {
+  todoId: string;
+};
+
+const TodoMenu = ({todoId}: TodoMenuProps) => {
+  const {openEditTask} = useTodos();
   const {t} = useTranslation();
 
-  const handleDelete = async () => {
-    await deleteTodo(todo);
-  };
+  const deleteTodoMutation = useMutation({
+    mutationFn: deleteTodo,
+  });
+
+  const handleDelete = useCallback(async () => {
+    await useTodoMutation(deleteTodoMutation.mutateAsync, todoId);
+  }, [deleteTodoMutation]);
 
   const handleEdit = () => {
-    openEditTask(todo);
+    openEditTask(todoId);
   };
 
   return (

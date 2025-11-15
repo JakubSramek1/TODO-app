@@ -1,29 +1,63 @@
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import TaskForm, {TaskFormValues} from './TaskForm';
-import type {TodoSummary} from '../../features/todos/types';
+import {useMutation} from '@tanstack/react-query';
+import {fetchTodo, updateTodo as updateTodoRequest} from '../../api/todoApi';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 import {useTodos} from '../../features/todos/TodoContext';
+import {useTodosQuery} from '../../features/todos/useTodosQuery';
+import TodosListSkeleton from './TodosListSkeleton';
 
 interface EditTaskFormProps {
-  todo: TodoSummary;
+  todoId: string;
   onClose: () => void;
 }
 
-const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
-  const {updateTodo} = useTodos();
+const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
   const {t} = useTranslation();
+  const {closeEditTask} = useTodos();
+
+  const {
+    data: todo,
+    isLoading: isTodoLoading,
+    // error: todosError,
+  } = useTodosQuery(() => fetchTodo(todoId), [todoId]);
+
+  const updateTodoMutation = useMutation({
+    mutationFn: updateTodoRequest,
+  });
+
+  const handleSubmit = useCallback(
+    async (payload: TaskFormValues) => {
+      if (todo) {
+        await useTodoMutation(
+          updateTodoMutation.mutateAsync,
+          {
+            id: todoId,
+            title: payload.title,
+            description: payload.description ?? '',
+          },
+          closeEditTask
+        );
+      }
+    },
+    [updateTodoMutation]
+  );
+
+  if (isTodoLoading) {
+    return <TodosListSkeleton />;
+  }
+
+  if (!todo) {
+    return null;
+  }
 
   const initialValues: TaskFormValues = {
     title: todo.title,
     description: todo.description ?? '',
   };
 
-  const handleSubmit = useCallback(
-    async (values: TaskFormValues) => {
-      await updateTodo(todo.id, values);
-    },
-    [todo.id, updateTodo]
-  );
+  console.log(todo, initialValues);
 
   return (
     <TaskForm
