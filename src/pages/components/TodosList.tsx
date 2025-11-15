@@ -6,7 +6,11 @@ import HomeEmptyState from './HomeEmptyState';
 import TaskRow from './TaskRow';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '../../features/auth/AuthContext';
-import {toggleTodoStatus as toggleTodoStatusRequest} from '../../api/todoApi';
+import {
+  TODO_LIST_QUERY_KEY,
+  TOGGLE_TODO_STATUS_QUERY_KEY,
+  toggleTodoStatus as toggleTodoStatusRequest,
+} from '../../api/todoApi';
 
 type TodosListProps = {
   todos: TodoSummary[];
@@ -46,9 +50,8 @@ const TaskSection = ({title, items, completed = false}: TaskSectionProps) => {
     mutationFn: ({id, completed}: {id: string; completed: boolean}) =>
       toggleTodoStatusRequest(id, completed),
     onSuccess: async () => {
-      console.log('onSuccess');
-      await queryClient.invalidateQueries({queryKey: ['toggleTodoStatus']});
-      await queryClient.refetchQueries({queryKey: ['todos']});
+      await queryClient.invalidateQueries({queryKey: [TOGGLE_TODO_STATUS_QUERY_KEY]});
+      await queryClient.refetchQueries({queryKey: [TODO_LIST_QUERY_KEY]});
     },
   });
 

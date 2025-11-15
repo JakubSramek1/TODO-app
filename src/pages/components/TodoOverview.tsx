@@ -1,16 +1,15 @@
 import HomeEmptyState from './HomeEmptyState';
 import TodosList from './TodosList';
-import {fetchTodos} from '../../api/todoApi';
+import {fetchTodos, TODO_LIST_QUERY_KEY} from '../../api/todoApi';
 import TodosListSkeleton from './TodosListSkeleton';
 import {useTodosQuery} from '../../features/todos/useTodosQuery';
-import {TODOS_QUERY_KEY} from '../../features/todos/TodoContext';
 
 const TodoOverview = () => {
   const {
     data: todos = [],
     isPending: isTodosPending,
     // error: todosError,
-  } = useTodosQuery(fetchTodos, TODOS_QUERY_KEY);
+  } = useTodosQuery(fetchTodos, [TODO_LIST_QUERY_KEY]);
 
   if (isTodosPending) {
     return <TodosListSkeleton />;

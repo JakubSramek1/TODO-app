@@ -9,11 +9,20 @@ import EditTaskForm from './components/EditTaskForm';
 import AppButton from '../components/ui/AppButton';
 import TodoErrorAlert from './components/TodoErrorAlert';
 import {useAuth} from '../features/auth/AuthContext';
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 const HomeContent = () => {
   const {editingTodoId, setEditingTodoId, error, clearError} = useTodos();
-  const {logout} = useAuth();
+  const {logout, accessToken} = useAuth();
   const {t} = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [accessToken, navigate]);
 
   return (
     <Box minH="100vh" display="flex" flexDirection="column">

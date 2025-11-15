@@ -9,8 +9,14 @@ import {
 } from 'react';
 import {useAuth} from '../auth/AuthContext';
 import {useQueryClient} from '@tanstack/react-query';
-
-export const TODOS_QUERY_KEY = ['todos'];
+import {
+  CREATE_TODO_QUERY_KEY,
+  DELETE_TODO_QUERY_KEY,
+  TODO_LIST_QUERY_KEY,
+  TODO_QUERY_KEY,
+  TOGGLE_TODO_STATUS_QUERY_KEY,
+  UPDATE_TODO_QUERY_KEY,
+} from '../../api/todoApi';
 
 interface TodoContextValue {
   setEditingTodoId: (todoId: string | null) => void;
@@ -31,7 +37,16 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
     if (!accessToken) {
       setEditingTodoId(null);
       setError(null);
-      queryClient.removeQueries({queryKey: TODOS_QUERY_KEY});
+      queryClient.removeQueries({
+        queryKey: [
+          TODO_LIST_QUERY_KEY,
+          TODO_QUERY_KEY,
+          CREATE_TODO_QUERY_KEY,
+          UPDATE_TODO_QUERY_KEY,
+          TOGGLE_TODO_STATUS_QUERY_KEY,
+          DELETE_TODO_QUERY_KEY,
+        ],
+      });
     }
   }, [accessToken, queryClient]);
 
