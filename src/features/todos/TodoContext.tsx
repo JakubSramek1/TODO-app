@@ -19,10 +19,8 @@ import {
 } from '../../api/todoApi';
 
 interface TodoContextValue {
-  setEditingTodoId: (todoId: string | null) => void;
   error: string | null;
   clearError: () => void;
-  editingTodoId: string | null;
 }
 
 const TodoContext = createContext<TodoContextValue | undefined>(undefined);
@@ -30,12 +28,10 @@ const TodoContext = createContext<TodoContextValue | undefined>(undefined);
 export const TodoProvider = ({children}: {children: ReactNode}) => {
   const {accessToken} = useAuth();
   const queryClient = useQueryClient();
-  const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!accessToken) {
-      setEditingTodoId(null);
       setError(null);
       queryClient.removeQueries({
         queryKey: [
@@ -54,12 +50,10 @@ export const TodoProvider = ({children}: {children: ReactNode}) => {
 
   const value = useMemo<TodoContextValue>(
     () => ({
-      editingTodoId,
       error,
       clearError,
-      setEditingTodoId,
     }),
-    [editingTodoId, error, clearError, setEditingTodoId]
+    [error, clearError]
   );
 
   return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;

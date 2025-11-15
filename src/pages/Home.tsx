@@ -1,5 +1,6 @@
 import {Box} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
+import {Routes, Route, useNavigate, useMatch} from 'react-router-dom';
 import AppHeader from '../components/ui/AppHeader';
 import CardWrapper from '../components/ui/CardWrapper';
 import NewTaskForm from './components/NewTaskForm';
@@ -10,13 +11,13 @@ import AppButton from '../components/ui/AppButton';
 import TodoErrorAlert from './components/TodoErrorAlert';
 import {useAuth} from '../features/auth/AuthContext';
 import {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
 
 const HomeContent = () => {
-  const {editingTodoId, setEditingTodoId, error, clearError} = useTodos();
+  const {error, clearError} = useTodos();
   const {logout, accessToken} = useAuth();
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const isHomePage = useMatch({path: '/', end: true});
 
   useEffect(() => {
     if (!accessToken) {
@@ -31,16 +32,14 @@ const HomeContent = () => {
         <Box maxW="45rem" mx="auto" display="flex" flexDirection="column" gap={4}>
           {error ? <TodoErrorAlert message={error} onDismiss={clearError} /> : null}
           <CardWrapper w="full" p={{base: 6, md: 10}} gap={{base: 6, md: 10}}>
-            {editingTodoId === '0' ? (
-              <NewTaskForm />
-            ) : editingTodoId ? (
-              <EditTaskForm todoId={editingTodoId} onClose={() => setEditingTodoId(null)} />
-            ) : (
-              <TodoOverview />
-            )}
+            <Routes>
+              <Route index element={<TodoOverview />} />
+              <Route path="new" element={<NewTaskForm />} />
+              <Route path=":taskId" element={<EditTaskForm />} />
+            </Routes>
           </CardWrapper>
         </Box>
-        {!editingTodoId && (
+        {isHomePage && (
           <Box mt={4} display="flex" justifyContent="center">
             <AppButton onClick={logout} w={{base: 'full', sm: 'auto'}}>
               {t('common.buttons.logout')}

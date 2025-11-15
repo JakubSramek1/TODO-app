@@ -1,9 +1,9 @@
 import {Icon, IconButton, Menu, Portal, Text} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
-import {useTodos} from '../../features/todos/TodoContext';
 import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 import {deleteTodo} from '../../api/todoApi';
 
@@ -12,13 +12,13 @@ type TodoMenuProps = {
 };
 
 const TodoMenu = ({todoId}: TodoMenuProps) => {
-  const {setEditingTodoId} = useTodos();
+  const navigate = useNavigate();
   const {t} = useTranslation();
 
-  const deleteTodoMutation = useTodoMutation(deleteTodo);
+  const deleteTodoMutation = useTodoMutation(deleteTodo, () => navigate('/'));
 
   const handleEdit = () => {
-    setEditingTodoId(todoId);
+    navigate(`/${todoId}`);
   };
 
   const handleDelete = async () => {

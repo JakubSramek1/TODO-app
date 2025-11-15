@@ -1,35 +1,35 @@
 import {useTranslation} from 'react-i18next';
+import {useParams, useNavigate} from 'react-router-dom';
 import TaskForm, {TaskFormValues} from './TaskForm';
 import {fetchTodo, updateTodo as updateTodoRequest} from '../../api/todoApi';
-import {useTodos} from '../../features/todos/TodoContext';
 import {useTodosQuery} from '../../features/todos/useTodosQuery';
 import TodosListSkeleton from './TodosListSkeleton';
 import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 
-interface EditTaskFormProps {
-  todoId: string;
-  onClose: () => void;
-}
-
-const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
+const EditTaskForm = () => {
   const {t} = useTranslation();
-  const {setEditingTodoId} = useTodos();
+  const {taskId} = useParams<{taskId: string}>();
+  const navigate = useNavigate();
+
+  if (!taskId) {
+    return null;
+  }
 
   const {
     data: todo,
     isLoading: isTodoLoading,
     // error: todosError,
-  } = useTodosQuery(() => fetchTodo(todoId), [todoId]);
+  } = useTodosQuery(() => fetchTodo(taskId), [taskId]);
 
   const handleCancel = () => {
-    setEditingTodoId(null);
+    navigate('/');
   };
 
   const updateTodoMutation = useTodoMutation(updateTodoRequest, handleCancel);
 
   const handleSubmit = async (payload: TaskFormValues) => {
     await updateTodoMutation.mutateAsync({
-      id: todoId,
+      id: taskId,
       title: payload.title,
       description: payload.description ?? '',
     });
@@ -54,7 +54,7 @@ const EditTaskForm = ({todoId, onClose}: EditTaskFormProps) => {
       isEdited
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onCancel={onClose}
+      onCancel={handleCancel}
     />
   );
 };

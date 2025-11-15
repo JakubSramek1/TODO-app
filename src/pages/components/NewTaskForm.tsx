@@ -1,6 +1,6 @@
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import TaskForm, {TaskFormValues} from './TaskForm';
-import {useTodos} from '../../features/todos/TodoContext';
 import {createTodo as createTodoRequest} from '../../api/todoApi';
 import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 
@@ -10,11 +10,11 @@ const initialValues: TaskFormValues = {
 };
 
 const NewTaskForm = () => {
-  const {setEditingTodoId} = useTodos();
   const {t} = useTranslation();
+  const navigate = useNavigate();
 
   const handleCancel = () => {
-    setEditingTodoId(null);
+    navigate('/');
   };
 
   const createTodoMutation = useTodoMutation(createTodoRequest, handleCancel);

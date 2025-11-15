@@ -1,7 +1,7 @@
 import {Box, Heading, Image, Text} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import PlaceholderImage from '../../assets/Image1.svg';
-import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
 import {TodoSummary} from '../../features/todos/types';
 
@@ -10,7 +10,7 @@ type HomeEmptyStateProps = {
 };
 
 const HomeEmptyState = ({todos}: HomeEmptyStateProps) => {
-  const {setEditingTodoId} = useTodos();
+  const navigate = useNavigate();
   const {t} = useTranslation();
 
   return (
@@ -36,7 +36,7 @@ const HomeEmptyState = ({todos}: HomeEmptyStateProps) => {
         {t('home.empty.description')}
       </Text>
       {!todos?.length ? (
-        <AppButton onClick={() => setEditingTodoId('0')}>
+        <AppButton onClick={() => navigate('/new')}>
           {t('common.buttons.createFirstTask')}
         </AppButton>
       ) : null}

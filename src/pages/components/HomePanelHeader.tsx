@@ -1,15 +1,15 @@
 import {Box, Heading, Icon, Text} from '@chakra-ui/react';
 import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import {ReactComponent as IconAdd} from '../../assets/icons/icon-add.svg';
-import {useTodos} from '../../features/todos/TodoContext';
 import AppButton from '../../components/ui/AppButton';
 import {getFormattedCurrentDate} from '../../utils/date';
 import {useAuth} from '../../features/auth/AuthContext';
 
 const HomePanelHeader = () => {
   const {user} = useAuth();
-  const {setEditingTodoId} = useTodos();
+  const navigate = useNavigate();
   const {t, i18n} = useTranslation();
   const username = user?.username ?? t('home.panel.defaultName');
 
@@ -36,7 +36,7 @@ const HomePanelHeader = () => {
       </Box>
       <AppButton
         css={{'& svg path': {fill: 'currentColor'}}}
-        onClick={() => setEditingTodoId('0')}
+        onClick={() => navigate('/new')}
         display="inline-flex"
         alignItems="center"
         gap={2}
