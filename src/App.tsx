@@ -20,7 +20,7 @@ function App() {
       </Helmet>
       <Routes>
         <Route
-          path="/"
+          path="/*"
           element={
             <ProtectedRoute>
               <Home />

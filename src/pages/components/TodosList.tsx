@@ -1,14 +1,24 @@
 import {Box, Separator, Stack, Text} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
 import HomePanelHeader from './HomePanelHeader';
-import {useTodos} from '../../features/todos/TodoContext';
 import type {TodoSummary} from '../../features/todos/types';
 import HomeEmptyState from './HomeEmptyState';
 import TaskRow from './TaskRow';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useAuth} from '../../features/auth/AuthContext';
+import {
+  TODO_LIST_QUERY_KEY,
+  TOGGLE_TODO_STATUS_QUERY_KEY,
+  toggleTodoStatus as toggleTodoStatusRequest,
+} from '../../api/todoApi';
 
-const TodosList = () => {
-  const {todos} = useTodos();
+type TodosListProps = {
+  todos: TodoSummary[];
+};
+
+const TodosList = ({todos}: TodosListProps) => {
   const {t} = useTranslation();
+
   const pending = todos.filter((todo) => !todo.completed);
   const completed = todos.filter((todo) => todo.completed);
 
@@ -18,7 +28,7 @@ const TodosList = () => {
       {pending.length > 0 ? (
         <TaskSection title={t('todos.sections.todo')} items={pending} />
       ) : (
-        <HomeEmptyState />
+        <HomeEmptyState todos={todos} />
       )}
       <TaskSection title={t('todos.sections.completed')} items={completed} completed />
     </Box>
@@ -32,8 +42,33 @@ interface TaskSectionProps {
 }
 
 const TaskSection = ({title, items, completed = false}: TaskSectionProps) => {
-  const {toggleTodoStatus} = useTodos();
   const {t} = useTranslation();
+  const queryClient = useQueryClient();
+  const {accessToken} = useAuth();
+
+  const toggleTodoStatusMutation = useMutation({
+    mutationFn: ({id, completed}: {id: string; completed: boolean}) =>
+      toggleTodoStatusRequest(id, completed),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: [TOGGLE_TODO_STATUS_QUERY_KEY]});
+      await queryClient.refetchQueries({queryKey: [TODO_LIST_QUERY_KEY]});
+    },
+  });
+
+  const toggleTodoStatus = async (todo: TodoSummary, completed: boolean) => {
+    if (!accessToken) {
+      return;
+    }
+
+    try {
+      await toggleTodoStatusMutation.mutateAsync({
+        id: todo.id,
+        completed,
+      });
+    } catch (err) {
+      console.error('Failed to update task status', err);
+    }
+  };
 
   if (items.length === 0) {
     return (

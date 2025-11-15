@@ -1,21 +1,28 @@
 import {Icon, IconButton, Menu, Portal, Text} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import {ReactComponent as IconEdit} from '../../assets/icons/icon-edit.svg';
 import {ReactComponent as IconDelete} from '../../assets/icons/icon-delete.svg';
 import {ReactComponent as IconMore} from '../../assets/icons/icon-more.svg';
-import {TodoSummary} from '../../features/todos/types';
-import {useTodos} from '../../features/todos/TodoContext';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
+import {deleteTodo} from '../../api/todoApi';
 
-const TodoMenu = ({todo}: {todo: TodoSummary}) => {
-  const {deleteTodo, openEditTask} = useTodos();
+type TodoMenuProps = {
+  todoId: string;
+};
+
+const TodoMenu = ({todoId}: TodoMenuProps) => {
+  const navigate = useNavigate();
   const {t} = useTranslation();
 
-  const handleDelete = async () => {
-    await deleteTodo(todo);
-  };
+  const deleteTodoMutation = useTodoMutation(deleteTodo, () => navigate('/'));
 
   const handleEdit = () => {
-    openEditTask(todo);
+    navigate(`/${todoId}`);
+  };
+
+  const handleDelete = async () => {
+    await deleteTodoMutation.mutateAsync(todoId);
   };
 
   return (

@@ -5,13 +5,12 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import AuthErrorAlert from '../../../components/auth/AuthErrorAlert';
 import FormField from '../../../components/form/FormField';
-import {useAppDispatch, useAppSelector} from '../../../hooks';
 import {ReactComponent as IconHide} from '../../../assets/icons/icon.hide.svg';
 import {ReactComponent as IconShow} from '../../../assets/icons/icon-show.svg';
 import {ReactComponent as IconForward} from '../../../assets/icons/icon-foward.svg';
-import {loginUser} from '../authSlice';
 import AppButton from '../../../components/ui/AppButton';
 import {useTranslation} from 'react-i18next';
+import {useAuth} from '../AuthContext';
 
 type LoginFormValues = {
   username: string;
@@ -24,8 +23,7 @@ const defaultValues: LoginFormValues = {
 };
 
 const LoginPanel = () => {
-  const dispatch = useAppDispatch();
-  const {status, error} = useAppSelector(({auth}) => auth);
+  const {login, isAuthenticating, authError} = useAuth();
   const {t} = useTranslation();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -49,8 +47,18 @@ const LoginPanel = () => {
     mode: 'onChange',
   });
 
-  const isLoading = status === 'loading' || isSubmitting;
-  const hasError = !!error;
+  const errorMessage = useMemo(() => {
+    if (!authError) {
+      return null;
+    }
+    if (authError === 'Unexpected error') {
+      return t('common.errors.unexpected');
+    }
+    return authError;
+  }, [authError, t]);
+
+  const isLoading = isAuthenticating || isSubmitting;
+  const hasError = Boolean(errorMessage);
   const passwordAriaLabel = isPasswordVisible
     ? t('auth.login.password.hide')
     : t('auth.login.password.show');
@@ -60,7 +68,11 @@ const LoginPanel = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    await dispatch(loginUser(values));
+    try {
+      await login(values);
+    } catch {
+      // Error state handled by AuthContext
+    }
   };
 
   return (
@@ -82,7 +94,7 @@ const LoginPanel = () => {
           </Text>
         </Stack>
 
-        {hasError ? <AuthErrorAlert>{error}</AuthErrorAlert> : null}
+        {hasError ? <AuthErrorAlert>{errorMessage}</AuthErrorAlert> : null}
 
         <Stack gap={{base: 4, md: 6}}>
           <FormField

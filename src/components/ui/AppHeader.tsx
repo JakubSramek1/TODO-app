@@ -2,10 +2,10 @@ import {Box, Image, Text} from '@chakra-ui/react';
 import {useTranslation} from 'react-i18next';
 import logo from '../../assets/logo.svg';
 import AppAvatar from './AppAvatar';
-import {useAppSelector} from '../../hooks';
+import {useAuth} from '../../features/auth/AuthContext';
 
 const AppHeader = () => {
-  const {accessToken} = useAppSelector(({auth}) => auth);
+  const {accessToken} = useAuth();
   const showAvatar = Boolean(accessToken);
   const {t} = useTranslation();
 

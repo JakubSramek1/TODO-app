@@ -1,29 +1,52 @@
-import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useParams, useNavigate} from 'react-router-dom';
 import TaskForm, {TaskFormValues} from './TaskForm';
-import type {TodoSummary} from '../../features/todos/types';
-import {useTodos} from '../../features/todos/TodoContext';
+import {fetchTodo, updateTodo as updateTodoRequest} from '../../api/todoApi';
+import {useTodosQuery} from '../../features/todos/useTodosQuery';
+import TodosListSkeleton from './TodosListSkeleton';
+import {useTodoMutation} from '../../features/todos/utils/executeTodoMutation';
 
-interface EditTaskFormProps {
-  todo: TodoSummary;
-  onClose: () => void;
-}
-
-const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
-  const {updateTodo} = useTodos();
+const EditTaskForm = () => {
   const {t} = useTranslation();
+  const {taskId} = useParams<{taskId: string}>();
+  const navigate = useNavigate();
+
+  if (!taskId) {
+    return null;
+  }
+
+  const {
+    data: todo,
+    isLoading: isTodoLoading,
+    // error: todosError,
+  } = useTodosQuery(() => fetchTodo(taskId), [taskId]);
+
+  const handleCancel = () => {
+    navigate('/');
+  };
+
+  const updateTodoMutation = useTodoMutation(updateTodoRequest, handleCancel);
+
+  const handleSubmit = async (payload: TaskFormValues) => {
+    await updateTodoMutation.mutateAsync({
+      id: taskId,
+      title: payload.title,
+      description: payload.description ?? '',
+    });
+  };
+
+  if (isTodoLoading) {
+    return <TodosListSkeleton />;
+  }
+
+  if (!todo) {
+    return null;
+  }
 
   const initialValues: TaskFormValues = {
     title: todo.title,
     description: todo.description ?? '',
   };
-
-  const handleSubmit = useCallback(
-    async (values: TaskFormValues) => {
-      await updateTodo(todo.id, values);
-    },
-    [todo.id, updateTodo]
-  );
 
   return (
     <TaskForm
@@ -31,7 +54,7 @@ const EditTaskForm = ({todo, onClose}: EditTaskFormProps) => {
       isEdited
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onCancel={onClose}
+      onCancel={handleCancel}
     />
   );
 };
