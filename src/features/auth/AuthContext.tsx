@@ -9,7 +9,7 @@ import {
 } from 'react';
 import {useMutation} from '@tanstack/react-query';
 import type {AuthCredentials, AuthTokensResponse, AuthUser} from './types';
-import {login as loginRequest, register as registerRequest} from '../../api/authApi';
+import {login as loginRequest} from '../../api/authApi';
 import {setAuthToken} from '../../api/httpClient';
 import type {AxiosError} from 'axios';
 
@@ -23,19 +23,11 @@ interface AuthState {
   user: AuthUser | null;
 }
 
-interface SetTokensPayload {
-  accessToken: string | null;
-  refreshToken?: string | null;
-  user?: AuthUser | null;
-}
-
 interface AuthContextValue extends AuthState {
   isAuthenticating: boolean;
   authError: string | null;
   login: (credentials: AuthCredentials) => Promise<void>;
-  register: (credentials: AuthCredentials) => Promise<void>;
   logout: () => void;
-  setTokens: (tokens: SetTokensPayload) => void;
 }
 
 const loadPersistedAuth = (): AuthState => {
@@ -99,26 +91,6 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [authState, setAuthState] = useState<AuthState>(() => loadPersistedAuth());
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const setTokens = useCallback((tokens: SetTokensPayload) => {
-    setAuthState((previous) => {
-      const nextAccessToken = tokens.accessToken;
-      const nextRefreshToken =
-        typeof tokens.refreshToken === 'undefined' ? previous.refreshToken : tokens.refreshToken;
-      const nextUser = typeof tokens.user === 'undefined' ? previous.user : tokens.user;
-
-      persistAccessToken(nextAccessToken);
-      persistRefreshToken(nextRefreshToken ?? null);
-      persistUser(nextUser ?? null);
-      setAuthToken(nextAccessToken);
-
-      return {
-        accessToken: nextAccessToken,
-        refreshToken: nextRefreshToken ?? null,
-        user: nextUser ?? null,
-      };
-    });
-  }, []);
-
   useEffect(() => {
     setAuthToken(authState.accessToken);
   }, [authState.accessToken]);
@@ -126,14 +98,22 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const handleAuthSuccess = useCallback(
     (credentials: AuthCredentials, tokens: AuthTokensResponse) => {
       const user = tokens.user ?? {username: credentials.username};
-      setTokens({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken ?? null,
+      const accessToken = tokens.accessToken;
+      const refreshToken = tokens.refreshToken ?? null;
+
+      persistAccessToken(accessToken);
+      persistRefreshToken(refreshToken);
+      persistUser(user);
+      setAuthToken(accessToken);
+
+      setAuthState({
+        accessToken,
+        refreshToken,
         user,
       });
       setAuthError(null);
     },
-    [setTokens]
+    []
   );
 
   const resolveErrorMessage = useCallback((error: unknown): string => {
@@ -179,26 +159,11 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     },
   });
 
-  const registerMutation = useMutation({
-    mutationFn: registerRequest,
-    onSuccess: (data, variables) => handleAuthSuccess(variables, data),
-    onError: (error: unknown) => {
-      setAuthError(resolveErrorMessage(error));
-    },
-  });
-
   const login = useCallback(
     async (credentials: AuthCredentials) => {
       await loginMutation.mutateAsync(credentials);
     },
     [loginMutation]
-  );
-
-  const register = useCallback(
-    async (credentials: AuthCredentials) => {
-      await registerMutation.mutateAsync(credentials);
-    },
-    [registerMutation]
   );
 
   const logout = useCallback(() => {
@@ -213,24 +178,19 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
       accessToken: authState.accessToken,
       refreshToken: authState.refreshToken,
       user: authState.user,
-      isAuthenticating: loginMutation.isPending || registerMutation.isPending,
+      isAuthenticating: loginMutation.isPending,
       authError,
       login,
-      register,
       logout,
-      setTokens,
     }),
     [
       authState.accessToken,
       authState.refreshToken,
       authState.user,
       loginMutation.isPending,
-      registerMutation.isPending,
       authError,
       login,
-      register,
       logout,
-      setTokens,
     ]
   );
 
@@ -244,4 +204,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
